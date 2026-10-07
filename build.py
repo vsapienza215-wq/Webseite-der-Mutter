@@ -25,7 +25,6 @@ EMAIL = "csapienza@gmx.de"
 
 NAV = [("/", "Startseite"), ("/beratung/", "Beratung"), ("/ueber-mich/", "Über mich")]
 FOOTER_NAV = [
-    ("/sitemap/", "Sitemap"),
     ("/impressum/", "Impressum"),
     ("/datenschutz/", "Datenschutz"),
     ("/haftungshinweis/", "Haftungshinweis"),
@@ -120,7 +119,7 @@ def footer():
     </div>
     <div class="footer-bottom">
       <span>© {year} {BRAND} · Concetta Sapienza</span>
-      <span>Die Beratung ersetzt keine ärztliche oder psychotherapeutische Behandlung.</span>
+      <span>Die Beratung ersetzt keine ärztliche oder psychotherapeutische Behandlung. · <a href="/sitemap.xml">Sitemap</a></span>
     </div>
   </div>
 </footer>"""
@@ -262,9 +261,8 @@ def main():
         pages.append(meta)
         print("✓", target.relative_to(ROOT))
 
-    today = datetime.date.today().isoformat()
     urls = "".join(
-        f"  <url>\n    <loc>{SITE}{m['path']}</loc>\n    <lastmod>{today}</lastmod>\n    <changefreq>{m.get('changefreq', 'monthly')}</changefreq>\n    <priority>{m.get('priority', '0.5')}</priority>\n  </url>\n"
+        f"  <url>\n    <loc>{SITE}{m['path']}</loc>\n    <changefreq>{m.get('changefreq', 'monthly')}</changefreq>\n    <priority>{m.get('priority', '0.5')}</priority>\n  </url>\n"
         for m in sorted(pages, key=lambda m: -float(m.get("priority", "0.5"))) if m.get("robots") != "noindex" and m["path"] != "/404.html"
     )
     (OUT / "sitemap.xml").write_text(

@@ -362,6 +362,8 @@ strong { color: var(--ink); font-weight: 500; }
 .footer-nav li + li { margin-top: .35rem; }
 .footer-nav a { display: inline-block; padding-block: .3rem; text-decoration: none; color: #fff; }
 .footer-nav a:hover { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: .25em; }
+.footer-bottom a { color: inherit; text-underline-offset: .25em; text-decoration-color: rgba(255, 255, 255, .35); }
+.footer-bottom a:hover { color: #fff; }
 .footer-bottom { margin-top: clamp(3rem, 6vw, 4.5rem); padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, .14); display: flex; flex-wrap: wrap; gap: .5rem 2rem; justify-content: space-between; color: rgba(255, 255, 255, .6); }
 
 /* Kontakt-Dialog */
