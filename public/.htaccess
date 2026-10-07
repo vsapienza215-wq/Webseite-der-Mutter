@@ -2,6 +2,11 @@
 
 Options -Indexes
 ErrorDocument 404 /404.html
+
+# Zugangsdaten und Fehlerprotokoll niemals ausliefern
+<FilesMatch "^(kontakt-config\.php|kontakt-fehler\.log)$">
+  Require all denied
+</FilesMatch>
 DirectoryIndex index.html
 
 <IfModule mod_rewrite.c>

@@ -200,16 +200,23 @@ strong { color: var(--ink); font-weight: 500; }
 
 /* Weg-Linie (Startseite) */
 .path-wrap { position: relative; }
-.path-line {
+.path-line, .path-dot-anchor {
   position: absolute; top: 0; bottom: 0; z-index: 1; pointer-events: none;
   left: max(.4rem, calc(50% - var(--narrow) / 2 - 7.5rem));
   width: clamp(.9rem, 9vw, 6rem); height: 100%;
 }
+.path-line { overflow: visible; }
 .path-line path { fill: none; stroke-width: 1.25; vector-effect: non-scaling-stroke; }
 .path-line .track { stroke: rgba(169, 137, 97, .16); }
-.path-line .draw { stroke: var(--line); stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--p, 0)); }
+.path-line .draw { stroke: var(--line); stroke-dasharray: 1; stroke-dashoffset: 1; }
+.js .path-line .draw { stroke-dasharray: 0 999999; }
+.path-dot {
+  position: absolute; top: 0; left: 0; z-index: 1; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%; background: var(--line); box-shadow: 0 0 0 5px rgba(169, 137, 97, .18);
+  opacity: 0; transition: opacity .4s var(--ease-out); pointer-events: none; will-change: transform;
+}
 @media (max-width: 40rem) {
-  .path-line { left: .45rem; width: .7rem; }
+  .path-line, .path-dot-anchor { left: .45rem; width: .7rem; }
   .path-wrap .container { width: min(100% - 4.25rem, var(--narrow)); margin-left: 2.75rem; margin-right: 1.5rem; }
   .hero .container { width: min(100% - 4.25rem, var(--narrow)); margin-left: 2.75rem; margin-right: 1.5rem; }
   .path-wrap .closing .container { margin-inline: auto; width: min(100% - 3rem, var(--narrow)); }
@@ -453,7 +460,8 @@ strong { color: var(--ink); font-weight: 500; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .scroll-cue { display: none; }
-  .path-line .draw { stroke-dashoffset: 0; }
+  .path-line .draw { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
+  .path-dot { display: none; }
   .steps__progress { transform: none; }
 }
 

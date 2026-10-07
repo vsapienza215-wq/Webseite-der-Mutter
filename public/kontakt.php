@@ -1,20 +1,28 @@
 <?php
 /**
- * SAPiENZA – Versand des Kontaktformulars
- * Läuft auf dem eigenen Hosting (PHP 7.4+), nutzt mail().
- * Spam-Schutz ohne Drittanbieter: Honeypot-Feld + Mindest-Ausfüllzeit + einfache Drosselung.
+ * SAPiENZA – Versand des Kontaktformulars (PHP 7.4+)
+ *
+ * Versandweg: SMTP über ein echtes Postfach (empfohlen, zuverlässig),
+ * sonst Fallback auf PHP mail(). Zugangsdaten stehen in kontakt-config.php.
+ * Spam-Schutz ohne Drittanbieter: Honeypot-Feld + Mindest-Ausfüllzeit + Drosselung.
+ * Fehler (ohne persönliche Daten) landen in kontakt-fehler.log (per .htaccess gesperrt).
  */
 
 declare(strict_types=1);
 
-// ---- Einstellungen -------------------------------------------------------
-const MAIL_TO      = 'csapienza@gmx.de';
-// Absender muss eine Adresse der eigenen Domain sein (sonst landet die Mail im Spam).
-const MAIL_FROM    = 'website@concetta-sapienza.com';
-const MIN_SECONDS  = 3;     // schneller ausgefüllt = Bot
-const RATE_LIMIT   = 5;     // max. Anfragen pro IP …
-const RATE_WINDOW  = 3600;  // … pro Stunde
-// --------------------------------------------------------------------------
+$config = array_merge([
+    'mail_to'     => 'csapienza@gmx.de',
+    'mail_from'   => 'website@concetta-sapienza.com',
+    'smtp_host'   => '',
+    'smtp_port'   => 587,
+    'smtp_secure' => 'tls',
+    'smtp_user'   => '',
+    'smtp_pass'   => '',
+], is_file(__DIR__ . '/kontakt-config.php') ? (array) require __DIR__ . '/kontakt-config.php' : []);
+
+const MIN_SECONDS = 3;     // schneller ausgefüllt = Bot
+const RATE_LIMIT  = 5;     // max. Anfragen pro IP …
+const RATE_WINDOW = 3600;  // … pro Stunde
 
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
@@ -40,11 +48,99 @@ function respond(bool $ok, string $message, int $code = 200): void
     exit;
 }
 
+function log_error(string $msg): void
+{
+    @file_put_contents(__DIR__ . '/kontakt-fehler.log', date('Y-m-d H:i:s') . '  ' . $msg . "\n", FILE_APPEND | LOCK_EX);
+}
+
 function clean_line(string $value, int $max): string
 {
     $value = trim(preg_replace('/[\r\n\t\0]+/', ' ', $value) ?? '');
     return mb_substr($value, 0, $max, 'UTF-8');
 }
+
+/** Minimaler SMTP-Client (SSL auf 465 oder STARTTLS auf 587, AUTH LOGIN). */
+function smtp_send(array $c, string $to, string $subject, string $body): void
+{
+    $remote = ($c['smtp_secure'] === 'ssl' ? 'ssl://' : 'tcp://') . $c['smtp_host'] . ':' . (int) $c['smtp_port'];
+    $ctx = stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true]]);
+    $fp = @stream_socket_client($remote, $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $ctx);
+    if (!$fp) {
+        throw new RuntimeException("Verbindung zu {$remote} fehlgeschlagen: {$errstr} ({$errno})");
+    }
+    stream_set_timeout($fp, 15);
+
+    $read = static function () use ($fp): string {
+        $data = '';
+        while (($line = fgets($fp, 515)) !== false) {
+            $data .= $line;
+            if (strlen($line) < 4 || $line[3] === ' ') break;
+        }
+        return $data;
+    };
+    $cmd = static function (?string $line, array $expect) use ($fp, $read): string {
+        if ($line !== null) fwrite($fp, $line . "\r\n");
+        $resp = $read();
+        if (!in_array((int) substr($resp, 0, 3), $expect, true)) {
+            $shown = $line !== null && stripos($line, 'AUTH') === false && strlen($line) < 100 ? $line : '(Befehl)';
+            throw new RuntimeException("SMTP-Fehler bei {$shown}: " . trim($resp));
+        }
+        return $resp;
+    };
+
+    $host = parse_url('http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'), PHP_URL_HOST) ?: 'localhost';
+    $cmd(null, [220]);
+    $cmd('EHLO ' . $host, [250]);
+    if ($c['smtp_secure'] === 'tls') {
+        $cmd('STARTTLS', [220]);
+        if (!stream_socket_enable_crypto($fp, true, STREAM_CRYPTO_METHOD_TLS_CLIENT | (defined('STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT') ? STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT : 0))) {
+            throw new RuntimeException('STARTTLS fehlgeschlagen');
+        }
+        $cmd('EHLO ' . $host, [250]);
+    }
+    if ($c['smtp_user'] !== '') {
+        $cmd('AUTH LOGIN', [334]);
+        $cmd(base64_encode($c['smtp_user']), [334]);
+        $cmd(base64_encode($c['smtp_pass']), [235]);
+    }
+    $cmd('MAIL FROM:<' . $c['mail_from'] . '>', [250]);
+    $cmd('RCPT TO:<' . $to . '>', [250, 251]);
+    $cmd('DATA', [354]);
+
+    $headers = [
+        'Date: ' . date('r'),
+        'From: SAPiENZA Website <' . $c['mail_from'] . '>',
+        'To: <' . $to . '>',
+        'Subject: ' . mb_encode_mimeheader($subject, 'UTF-8', 'B'),
+        'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . substr(strrchr($c['mail_from'], '@'), 1) . '>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: base64',
+    ];
+    $data = implode("\r\n", $headers) . "\r\n\r\n" . chunk_split(base64_encode($body));
+    $cmd($data . "\r\n.", [250]);
+    $cmd('QUIT', [221]);
+    fclose($fp);
+}
+
+function php_mail_send(array $c, string $to, string $subject, string $body): void
+{
+    if (!function_exists('mail')) {
+        throw new RuntimeException('PHP mail() ist auf diesem Server deaktiviert');
+    }
+    $headers = [
+        'From: SAPiENZA Website <' . $c['mail_from'] . '>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: 8bit',
+    ];
+    $ok = mail($to, mb_encode_mimeheader($subject, 'UTF-8', 'B'), $body, implode("\r\n", $headers), '-f' . $c['mail_from']);
+    if (!$ok) {
+        throw new RuntimeException('PHP mail() hat false zurückgegeben (Server verschickt keine Mails)');
+    }
+}
+
+// ---------------------------------------------------------------------------
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     header('Allow: POST');
@@ -62,7 +158,7 @@ if ($ts > 0 && (time() - intdiv($ts, 1000)) < MIN_SECONDS) {
     respond(true, 'Vielen Dank.');
 }
 
-// Einfache Drosselung pro IP (gehasht, keine Klartext-IP gespeichert)
+// Drosselung pro IP (gehasht, keine Klartext-IP gespeichert)
 $ipHash = hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . __FILE__);
 $rateFile = sys_get_temp_dir() . '/sapienza_rate_' . substr($ipHash, 0, 32);
 $hits = [];
@@ -76,8 +172,8 @@ if (count($hits) >= RATE_LIMIT) {
     respond(false, 'Es wurden bereits mehrere Anfragen gesendet. Bitte versuchen Sie es später erneut.', 429);
 }
 
-$vorname = clean_line((string) ($_POST['vorname'] ?? ''), 60);
-$telefon = clean_line((string) ($_POST['telefon'] ?? ''), 30);
+$vorname  = clean_line((string) ($_POST['vorname'] ?? ''), 60);
+$telefon  = clean_line((string) ($_POST['telefon'] ?? ''), 30);
 $anliegen = mb_substr(trim((string) ($_POST['anliegen'] ?? '')), 0, 2000, 'UTF-8');
 $einwilligung = ($_POST['einwilligung'] ?? '') === 'ja';
 
@@ -89,34 +185,25 @@ if (!preg_match('/^[0-9+()\/\-\s]{6,30}$/', $telefon)) {
 }
 
 $subject = 'Neue Anfrage über die Website – ' . $vorname;
-$body = "Neue Anfrage über das Kontaktformular\n"
-      . "=====================================\n\n"
-      . "Vorname:  {$vorname}\n"
-      . "Telefon:  {$telefon}\n\n"
-      . "Worum geht es?\n"
-      . ($anliegen !== '' ? $anliegen : '(keine Angabe)') . "\n\n"
-      . "-------------------------------------\n"
-      . "Einwilligung Datenschutz (inkl. Gesundheitsdaten): erteilt\n"
-      . 'Gesendet am: ' . date('d.m.Y, H:i') . " Uhr\n";
+$body = "Neue Anfrage über das Kontaktformular\r\n"
+      . "=====================================\r\n\r\n"
+      . "Vorname:  {$vorname}\r\n"
+      . "Telefon:  {$telefon}\r\n\r\n"
+      . "Worum geht es?\r\n"
+      . ($anliegen !== '' ? str_replace(["\r\n", "\r", "\n"], "\r\n", $anliegen) : '(keine Angabe)') . "\r\n\r\n"
+      . "-------------------------------------\r\n"
+      . "Einwilligung Datenschutz (inkl. Gesundheitsdaten): erteilt\r\n"
+      . 'Gesendet am: ' . date('d.m.Y, H:i') . " Uhr\r\n";
 
-$headers = [
-    'From: SAPiENZA Website <' . MAIL_FROM . '>',
-    'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
-    'X-Mailer: SAPiENZA',
-];
-
-$sent = mail(
-    MAIL_TO,
-    mb_encode_mimeheader($subject, 'UTF-8', 'B'),
-    $body,
-    implode("\r\n", $headers),
-    '-f' . MAIL_FROM
-);
-
-if (!$sent) {
-    respond(false, 'Das hat leider nicht geklappt. Bitte versuchen Sie es später erneut oder schreiben Sie eine E-Mail an ' . MAIL_TO . '.', 500);
+try {
+    if ($config['smtp_host'] !== '') {
+        smtp_send($config, $config['mail_to'], $subject, $body);
+    } else {
+        php_mail_send($config, $config['mail_to'], $subject, $body);
+    }
+} catch (Throwable $e) {
+    log_error($e->getMessage());
+    respond(false, 'Das hat leider nicht geklappt. Bitte versuchen Sie es später erneut oder schreiben Sie eine E-Mail an ' . $config['mail_to'] . '.', 500);
 }
 
 $hits[] = time();

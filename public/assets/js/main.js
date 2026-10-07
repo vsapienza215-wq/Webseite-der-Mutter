@@ -9,18 +9,82 @@
   var header = document.querySelector('.site-header');
   var lastY = window.scrollY;
 
-  /* Fortschritt für Weg-Linie und Timeline (--p von 0 bis 1) */
+  /* Fortschritt für Timeline (--p von 0 bis 1) */
   var progressEls = Array.prototype.slice.call(document.querySelectorAll('[data-progress]'));
+
+  /* Weg-Linie: Spitze folgt exakt der Bildschirmmitte.
+     Die Kurve ist in y monoton – per Tabelle wird zu jeder Höhe die passende Pfadlänge gesucht. */
+  var path = document.querySelector('.path-wrap');
+  var pathSvg = path && path.querySelector('.path-line');
+  var pathDraw = path && path.querySelector('.path-line .draw');
+  var pathTrack = path && path.querySelector('.path-line .track');
+  var pathDot = path && path.querySelector('.path-dot');
+  var pathTable = null;
+  var pathTotal = 0;
+
+  var pathBase = pathTrack && pathTrack.getAttribute('d');
+  var pathW = 0, pathH = 0;
+
+  /* Pfad in echte Pixel umrechnen (Basis: 100 × 1000), damit Strichlänge und Position übereinstimmen */
+  function buildPathTable() {
+    if (!pathTrack || !pathDraw || typeof pathTrack.getTotalLength !== 'function') return;
+    var box = pathSvg.getBoundingClientRect();
+    pathW = box.width; pathH = box.height;
+    if (!pathW || !pathH) return;
+    var i = 0;
+    var d = pathBase.replace(/-?\d*\.?\d+/g, function (n) {
+      return (parseFloat(n) * (i++ % 2 === 0 ? pathW / 100 : pathH / 1000)).toFixed(2);
+    });
+    pathSvg.setAttribute('viewBox', '0 0 ' + pathW.toFixed(2) + ' ' + pathH.toFixed(2));
+    pathTrack.setAttribute('d', d);
+    pathDraw.setAttribute('d', d);
+    pathTotal = pathTrack.getTotalLength();
+    pathDraw.style.strokeDasharray = pathTotal.toFixed(2) + ' ' + (pathTotal + 10).toFixed(2);
+    pathTable = [];
+    var steps = Math.max(400, Math.round(pathH / 6));
+    for (var k = 0; k <= steps; k++) {
+      var len = pathTotal * k / steps;
+      var pt = pathTrack.getPointAtLength(len);
+      pathTable.push({ len: len, x: pt.x, y: pt.y });
+    }
+  }
+
+  function lookup(y) {
+    var lo = 0, hi = pathTable.length - 1;
+    if (y <= pathTable[0].y) return pathTable[0];
+    if (y >= pathTable[hi].y) return pathTable[hi];
+    while (hi - lo > 1) {
+      var mid = (lo + hi) >> 1;
+      if (pathTable[mid].y < y) lo = mid; else hi = mid;
+    }
+    var a = pathTable[lo], b = pathTable[hi];
+    var t = (y - a.y) / ((b.y - a.y) || 1);
+    return { len: a.len + (b.len - a.len) * t, x: a.x + (b.x - a.x) * t, y: y };
+  }
+
+  function updatePath() {
+    if (!pathTable) return;
+    var rect = path.getBoundingClientRect();
+    if (Math.abs(rect.height - pathH) > 1) { buildPathTable(); if (!pathTable) return; }
+    var target = window.innerHeight * 0.5 - rect.top;           // Bildschirmmitte, relativ zur Linie
+    var hit = lookup(Math.min(pathH, Math.max(0, target)));
+    pathDraw.style.strokeDashoffset = (pathTotal - hit.len).toFixed(2);
+    if (pathDot) {
+      pathDot.style.opacity = target > 0 && target < pathH ? '1' : '0';
+      pathDot.style.transform = 'translate(' + hit.x.toFixed(1) + 'px,' + hit.y.toFixed(1) + 'px)';
+    }
+  }
 
   function updateProgress() {
     var vh = window.innerHeight;
     progressEls.forEach(function (el) {
       var rect = el.getBoundingClientRect();
-      var anchor = parseFloat(el.getAttribute('data-progress')) || 0.7;
+      var anchor = parseFloat(el.getAttribute('data-progress')) || 0.5;
       var p = (vh * anchor - rect.top) / rect.height;
       p = Math.min(1, Math.max(0, p));
       el.style.setProperty('--p', p.toFixed(4));
     });
+    updatePath();
   }
 
   var ticking = false;
@@ -42,11 +106,14 @@
 
   if (reduceMotion) {
     progressEls.forEach(function (el) { el.style.setProperty('--p', '1'); });
+    if (pathDraw) pathDraw.style.strokeDashoffset = '0';
   } else {
+    buildPathTable();
     updateProgress();
   }
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll, { passive: true });
+  window.addEventListener('resize', function () { pathH = -9; onScroll(); }, { passive: true });
+  window.addEventListener('load', onScroll);
   onScroll();
 
   /* Scroll-Reveal */
