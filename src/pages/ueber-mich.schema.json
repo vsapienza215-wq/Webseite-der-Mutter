@@ -1,0 +1,22 @@
+[
+ {
+  "@type": "Person",
+  "@id": "{SITE}/ueber-mich/#person",
+  "name": "Concetta Sapienza",
+  "givenName": "Concetta",
+  "familyName": "Sapienza",
+  "jobTitle": "Gesundheitsberaterin",
+  "image": "{SITE}/assets/img/concetta-sapienza-1024.webp",
+  "worksFor": {
+   "@id": "{SITE}/#beratung"
+  },
+  "hasCredential": {
+   "@type": "EducationalOccupationalCredential",
+   "name": "Zertifizierte Ayurveda-Gesundheitsberaterin"
+  },
+  "workLocation": {
+   "@type": "Place",
+   "name": "Kempten (Allgäu)"
+  }
+ }
+]
