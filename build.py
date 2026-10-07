@@ -19,7 +19,7 @@ ROOT = Path(__file__).parent
 SRC = ROOT / "src" / "pages"
 OUT = ROOT / "public"
 
-SITE = "https://concetta.sapienza.com"   # Domain bei Bedarf hier ändern
+SITE = "https://concetta-sapienza.com"   # Domain bei Bedarf hier ändern
 BRAND = "SAPiENZA"
 EMAIL = "csapienza@gmx.de"
 

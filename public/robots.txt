@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /kontakt.php
 
-Sitemap: https://concetta.sapienza.com/sitemap.xml
+Sitemap: https://concetta-sapienza.com/sitemap.xml

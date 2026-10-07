@@ -10,7 +10,7 @@ declare(strict_types=1);
 // ---- Einstellungen -------------------------------------------------------
 const MAIL_TO      = 'csapienza@gmx.de';
 // Absender muss eine Adresse der eigenen Domain sein (sonst landet die Mail im Spam).
-const MAIL_FROM    = 'website@concetta.sapienza.com';
+const MAIL_FROM    = 'website@concetta-sapienza.com';
 const MIN_SECONDS  = 3;     // schneller ausgefüllt = Bot
 const RATE_LIMIT   = 5;     // max. Anfragen pro IP …
 const RATE_WINDOW  = 3600;  // … pro Stunde
