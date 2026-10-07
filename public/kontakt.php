@@ -10,9 +10,15 @@
 
 declare(strict_types=1);
 
+// Absender-Standard: Adresse der Domain, auf der die Seite tatsächlich läuft (wichtig für SPF/Zustellbarkeit)
+$siteHost = strtolower(preg_replace('/^www\./i', '', (string) parse_url('http://' . ($_SERVER['HTTP_HOST'] ?? ''), PHP_URL_HOST)));
+if (!preg_match('/^[a-z0-9.-]+\.[a-z]{2,}$/', $siteHost)) {
+    $siteHost = 'concetta-sapienza.com';
+}
+
 $config = array_merge([
-    'mail_to'     => 'csapienza@gmx.de',
-    'mail_from'   => 'website@concetta-sapienza.com',
+    'mail_to'     => 'mumsapienza@gmail.com',
+    'mail_from'   => 'kontakt@' . $siteHost,
     'smtp_host'   => '',
     'smtp_port'   => 587,
     'smtp_secure' => 'tls',
@@ -142,6 +148,11 @@ function php_mail_send(array $c, string $to, string $subject, string $body): voi
 
 // ---------------------------------------------------------------------------
 
+// mailtest.php nutzt nur Einstellungen und Versandfunktionen
+if (defined('SAPIENZA_MAILTEST')) {
+    return;
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     header('Allow: POST');
     respond(false, 'Bitte nutzen Sie das Formular auf der Website.', 405);
@@ -203,7 +214,7 @@ try {
     }
 } catch (Throwable $e) {
     log_error($e->getMessage());
-    respond(false, 'Das hat leider nicht geklappt. Bitte versuchen Sie es später erneut oder schreiben Sie eine E-Mail an ' . $config['mail_to'] . '.', 500);
+    respond(false, 'Das hat leider nicht geklappt. Bitte versuchen Sie es später erneut oder nutzen Sie die Kontaktdaten im Impressum.', 500);
 }
 
 $hits[] = time();

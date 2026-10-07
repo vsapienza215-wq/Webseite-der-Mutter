@@ -5,17 +5,17 @@
  * Diese Datei ist per .htaccess gesperrt und wird nie im Browser angezeigt.
  * Passwort NUR auf dem Server eintragen, nicht ins Git-Repository.
  *
- * Empfohlen: beim Hoster ein Postfach website@concetta-sapienza.com anlegen
+ * Empfohlen: beim Hoster ein Postfach kontakt@concetta-sapienza.com anlegen
  * und dessen SMTP-Daten hier eintragen. Bleibt smtp_host leer, wird PHP mail() benutzt.
  *
  * Typische Werte:  IONOS  smtp.ionos.de   587 tls
  *                  Strato smtp.strato.de  465 ssl
- *                  all-inkl  (siehe KAS)  465 ssl
+ *                  all-inkl  w0xxxxxx.kasserver.com 465 ssl  (Benutzer: m0xxxxxx oder E-Mail-Adresse, siehe KAS → E-Mail)
  *                  Hostinger smtp.hostinger.com 465 ssl
  */
 return [
-    'mail_to'     => 'csapienza@gmx.de',             // Empfänger der Anfragen
-    'mail_from'   => 'website@concetta-sapienza.com', // muss zum SMTP-Postfach passen
+    'mail_to'     => 'mumsapienza@gmail.com',        // Empfänger der Anfragen
+    'mail_from'   => 'kontakt@concetta-sapienza.com', // muss zum SMTP-Postfach passen
     'smtp_host'   => '',
     'smtp_port'   => 587,
     'smtp_secure' => 'tls',                          // 'tls' (587) oder 'ssl' (465)

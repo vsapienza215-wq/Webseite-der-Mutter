@@ -264,8 +264,8 @@ def main():
 
     today = datetime.date.today().isoformat()
     urls = "".join(
-        f"  <url><loc>{SITE}{m['path']}</loc><lastmod>{today}</lastmod><priority>{m.get('priority', '0.5')}</priority></url>\n"
-        for m in pages if m.get("robots") != "noindex" and m["path"] != "/404.html"
+        f"  <url>\n    <loc>{SITE}{m['path']}</loc>\n    <lastmod>{today}</lastmod>\n    <changefreq>{m.get('changefreq', 'monthly')}</changefreq>\n    <priority>{m.get('priority', '0.5')}</priority>\n  </url>\n"
+        for m in sorted(pages, key=lambda m: -float(m.get("priority", "0.5"))) if m.get("robots") != "noindex" and m["path"] != "/404.html"
     )
     (OUT / "sitemap.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n',

@@ -6,7 +6,8 @@ Statische Website (HTML/CSS/JS + ein PHP-Skript für das Kontaktformular). Kein 
 Den **Inhalt von `public/`** in das Hauptverzeichnis des Webspaces laden (inkl. versteckter Datei `.htaccess`). Voraussetzung: Apache + PHP ≥ 7.4 mit `mail()`.
 
 ## Kontaktformular einrichten (einmalig)
-1. Beim Hoster ein Postfach `website@concetta-sapienza.com` anlegen.
+0. Schnelltest: `https://DOMAIN/mailtest.php` aufrufen – zeigt, ob der Server Mails annimmt und warum nicht. Danach `mailtest.php` löschen.
+1. Beim Hoster (all-inkl: KAS → E-Mail) ein Postfach `kontakt@concetta-sapienza.com` anlegen.
 2. Auf dem Server `kontakt-config.beispiel.php` kopieren als `kontakt-config.php` und SMTP-Daten des Postfachs eintragen (Server, Port, Benutzer, Passwort).
 3. Testanfrage senden. Klappt es nicht: Datei `kontakt-fehler.log` per FTP ansehen (enthält nur die Fehlermeldung, keine Kundendaten).
 
