@@ -145,7 +145,7 @@ def footer():
       <span>© {year} {BRAND} · Concetta Sapienza</span>
       <span>Die Beratung ersetzt keine ärztliche oder psychotherapeutische Behandlung. · <a href="/sitemap.xml">Sitemap</a></span>
     </div>
-    <p class="footer-credit">Created by <a href="https://valentino-sapienza.com" target="_blank" rel="noopener">Valentino Sapienza</a></p>
+    <p class="footer-credit">Created by <a href="https://valentino-sapienza.com" target="_blank" rel="noopener">Valentino Sapienza</a> – Webdesign aus Berlin</p>
   </div>
 </footer>"""
 
