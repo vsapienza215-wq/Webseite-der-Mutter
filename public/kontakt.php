@@ -109,7 +109,7 @@ function smtp_send(array $c, string $to, string $subject, string $body): void
 
     $headers = [
         'Date: ' . date('r'),
-        'From: SAPiENZA Website <' . $c['mail_from'] . '>',
+        'From: SAPiENZA <' . $c['mail_from'] . '>',
         'To: <' . $to . '>',
         'Subject: ' . mb_encode_mimeheader($subject, 'UTF-8', 'B'),
         'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . substr(strrchr($c['mail_from'], '@'), 1) . '>',
@@ -129,7 +129,7 @@ function php_mail_send(array $c, string $to, string $subject, string $body): voi
         throw new RuntimeException('PHP mail() ist auf diesem Server deaktiviert');
     }
     $headers = [
-        'From: SAPiENZA Website <' . $c['mail_from'] . '>',
+        'From: SAPiENZA <' . $c['mail_from'] . '>',
         'MIME-Version: 1.0',
         'Content-Type: text/plain; charset=UTF-8',
         'Content-Transfer-Encoding: 8bit',
