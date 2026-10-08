@@ -11,7 +11,7 @@
 declare(strict_types=1);
 
 $config = array_merge([
-    'mail_to'     => 'kontakt@concetta-sapienza.com',
+    'mail_to'     => 'csapienza@gmx.de',
     'mail_from'   => 'kontakt@concetta-sapienza.com',
     'smtp_host'   => '',
     'smtp_port'   => 587,
