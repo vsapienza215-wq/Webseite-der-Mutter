@@ -198,19 +198,26 @@ strong { color: var(--ink); font-weight: 500; }
   padding-block: calc(var(--header-h) + clamp(2rem, 6vh, 5rem)) clamp(6rem, 14vh, 9rem);
   position: relative;
 }
-.hero h1 { font-size: clamp(1.9rem, .95rem + 3vw, 3.75rem); line-height: 1.1; }
+.hero h1 { font-size: clamp(2.2rem, .9rem + 4.4vw, 5.25rem); line-height: 1.08; letter-spacing: -.015em; }
 .hero { overflow: hidden; }
-/* Text zentriert über der Blume; die Maus geht durch den Text zur Blume */
-.hero__content { position: relative; max-width: 44rem; margin-inline: auto; text-align: center; pointer-events: none; }
-.hero__content h1, .hero__content p { text-shadow: 0 0 22px rgba(255, 255, 255, .95), 0 0 8px rgba(255, 255, 255, .85), 0 0 2px #fff; }
-.hero__content .hero__sub p { color: var(--ink); }
-.hero__sub { margin-inline: auto; }
+/* Editoriale Komposition: gestaffelte Zeilen laufen über die Blüte, Unterzeilen rechts unten */
+.hero__content { position: relative; max-width: 66rem; margin-inline: auto; pointer-events: none; }
+.hero__content h1 { text-shadow: 0 0 18px rgba(255, 255, 255, .7); }
+.hero h1 .line:nth-child(2) { padding-left: 34%; }
+.hero h1 .line:nth-child(3) { padding-left: 14%; }
+.hero__content .hero__sub { margin: clamp(2.5rem, 5vw, 4rem) 0 0 auto; max-width: 21rem; }
+.hero__content .hero__sub p { font-size: clamp(1.125rem, 1rem + .5vw, 1.375rem); line-height: 1.5; color: var(--ink); text-shadow: 0 0 14px rgba(255, 255, 255, .9); }
+@media (max-width: 48rem) {
+  .hero h1 .line:nth-child(2) { padding-left: 11%; }
+  .hero h1 .line:nth-child(3) { padding-left: 4%; }
+  .hero__content .hero__sub { margin-left: 11%; }
+}
 .hero .container { pointer-events: none; }
 
 /* Blume im Hero: unscharf und gedämpft, bei Berührung klar und farbig */
 .hero-flower {
   position: absolute; bottom: 0; z-index: 1;
-  --fw: clamp(15rem, 27vw, 25rem);
+  --fw: clamp(15rem, 30vw, 28rem);
   width: var(--fw); left: calc(50% - var(--fw) * .533);   /* Stiel genau mittig */
   transform-origin: 53.3% 100%;
 }
