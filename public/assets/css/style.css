@@ -210,12 +210,12 @@ strong { color: var(--ink); font-weight: 500; }
 /* Blume im Hero: unscharf und gedämpft, bei Berührung klar und farbig */
 .hero-flower {
   position: absolute; bottom: 0; z-index: 1;
-  --fw: clamp(20rem, 44vw, 38rem);
-  width: var(--fw); left: calc(50% - var(--fw) * .61);
-  transform-origin: 0 100%;
+  --fw: clamp(15rem, 27vw, 25rem);
+  width: var(--fw); left: calc(50% - var(--fw) * .533);   /* Stiel genau mittig */
+  transform-origin: 53.3% 100%;
 }
-.hero-flower { perspective: 900px; perspective-origin: 30% 60%; }
-.hero-flower__sway { position: relative; transform-origin: 0 100%; transform-style: preserve-3d; will-change: transform; }
+.hero-flower { perspective: 900px; perspective-origin: 53% 60%; }
+.hero-flower__sway { position: relative; transform-origin: 53.3% 100%; transform-style: preserve-3d; will-change: transform; }
 .hero-flower img { display: block; width: 100%; height: auto; }
 .hero-flower__soft { filter: blur(7px) saturate(.38); opacity: .9; }
 /* scharfe, farbige Ebene wird beim Hover eingeblendet (Überblendung statt Filter-Animation) */
@@ -229,11 +229,11 @@ strong { color: var(--ink); font-weight: 500; }
   .hero-flower { animation: flower-in 2.4s var(--ease-out) .2s both; }
 }
 @keyframes flower-in {
-  from { opacity: 0; transform: rotate(-9deg) translateX(-6%); }
+  from { opacity: 0; transform: rotate(-6deg) translateY(4%); }
   to { opacity: 1; transform: none; }
 }
 @media (max-width: 48rem) {
-  .hero-flower { --fw: min(96vw, 26rem); }
+  .hero-flower { --fw: min(78vw, 20rem); }
   .hero .scroll-cue { display: none; }
 }
 .hero__sub { margin-top: clamp(2rem, 4vw, 3rem); max-width: 30rem; }
