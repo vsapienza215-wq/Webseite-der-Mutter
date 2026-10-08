@@ -297,6 +297,8 @@
     vorname: 'Bitte geben Sie Ihren Vornamen an.',
     telefon: 'Bitte geben Sie eine Telefonnummer an, unter der ich Sie erreiche.',
     telefonFormat: 'Bitte prüfen Sie die Telefonnummer (nur Ziffern, Leerzeichen, +, -, /).',
+    email: 'Bitte geben Sie Ihre E-Mail-Adresse an.',
+    emailFormat: 'Bitte prüfen Sie die E-Mail-Adresse.',
     einwilligung: 'Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.'
   };
 
@@ -318,13 +320,17 @@
     if (!telefon) { setError('telefon', messages.telefon); ok = false; }
     else if (!/^[0-9+()\/\-\s]{6,30}$/.test(telefon)) { setError('telefon', messages.telefonFormat); ok = false; }
     else setError('telefon', '');
+    var email = form.elements.email.value.trim();
+    if (!email) { setError('email', messages.email); ok = false; }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setError('email', messages.emailFormat); ok = false; }
+    else setError('email', '');
     var consent = form.elements.einwilligung.checked;
     setError('einwilligung', consent ? '' : messages.einwilligung);
     if (!consent) ok = false;
     return ok;
   }
 
-  ['vorname', 'telefon', 'einwilligung'].forEach(function (name) {
+  ['vorname', 'telefon', 'email', 'einwilligung'].forEach(function (name) {
     var el = form.elements[name];
     el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', function () {
       if (el.getAttribute('aria-invalid') === 'true') validate();

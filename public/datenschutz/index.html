@@ -25,7 +25,7 @@
 <link rel="preload" href="/assets/fonts/dm-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/style.css?v=e6ebac54">
 <script>document.documentElement.classList.add('js')</script>
-<script src="/assets/js/main.js?v=c5fde03f" defer></script>
+<script src="/assets/js/main.js?v=832d35e3" defer></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"ProfessionalService","@id":"https://concetta-sapienza.com/#beratung","name":"SAPiENZA","alternateName":"SAPiENZA Gesundheitsberatung","description":"Gesundheitsberatung mit psychologischen Aspekten in Kempten (Allgäu) – vor Ort, beim Spaziergang, online und telefonisch.","url":"https://concetta-sapienza.com/","logo":"https://concetta-sapienza.com/assets/img/logo.svg?v=a5c5aef1","image":"https://concetta-sapienza.com/assets/img/og-image.jpg?v=2498fca9","email":"kontakt@concetta-sapienza.com","address":{"@type":"PostalAddress","streetAddress":"Am Feilbergbach 2b","addressLocality":"Kempten (Allgäu)","addressRegion":"Bayern","addressCountry":"DE"},"areaServed":[{"@type":"City","name":"Kempten (Allgäu)"},{"@type":"AdministrativeArea","name":"Allgäu"},{"@type":"Country","name":"Deutschland"}],"priceRange":"0–80 €","founder":{"@id":"https://concetta-sapienza.com/ueber-mich/#person"},"knowsLanguage":"de"},{"@type":"WebPage","@id":"https://concetta-sapienza.com/datenschutz/#webpage","url":"https://concetta-sapienza.com/datenschutz/","name":"Datenschutzerklärung | SAPiENZA","description":"Datenschutzerklärung von SAPiENZA – Gesundheitsberatung in Kempten (Allgäu). Keine Cookies, kein Tracking, Schriften lokal.","inLanguage":"de","isPartOf":{"@type":"WebSite","@id":"https://concetta-sapienza.com/#website","url":"https://concetta-sapienza.com/","name":"SAPiENZA"},"about":{"@id":"https://concetta-sapienza.com/#beratung"}}]}</script>
 </head>
 <body>
@@ -87,9 +87,10 @@
     <ul class="dash-list">
       <li>Vorname (Pflichtfeld)</li>
       <li>Telefonnummer (Pflichtfeld)</li>
+      <li>E-Mail-Adresse (Pflichtfeld)</li>
       <li>Ihre kurze Beschreibung, worum es geht (freiwillig)</li>
     </ul>
-    <p><strong>Zweck:</strong> Ich nutze diese Angaben ausschließlich, um Sie zurückzurufen und Ihre Anfrage zu beantworten, etwa um ein Kennenlerngespräch zu vereinbaren.</p>
+    <p><strong>Zweck:</strong> Ich nutze diese Angaben ausschließlich, um Sie zurückzurufen oder Ihnen per E-Mail zu antworten und Ihre Anfrage zu beantworten, etwa um ein Kennenlerngespräch zu vereinbaren.</p>
     <p><strong>Gesundheitsdaten:</strong> In Ihrer Beschreibung können Angaben zu Ihrer Gesundheit enthalten sein. Diese gehören zu den besonders geschützten Daten nach Art.&nbsp;9 DSGVO. Sie werden nur mit Ihrer ausdrücklichen Einwilligung verarbeitet, die Sie über das Häkchen im Formular erteilen.</p>
     <p><strong>Rechtsgrundlage:</strong> Ihre Einwilligung (Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;a und Art.&nbsp;9 Abs.&nbsp;2 lit.&nbsp;a DSGVO) sowie die Anbahnung eines Vertrags (Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b DSGVO). Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen, z.&nbsp;B. per E-Mail.</p>
     <p><strong>Übermittlung:</strong> Die Formularangaben werden nicht in einer Datenbank auf der Website gespeichert. Sie werden direkt als E-Mail über das Postfach kontakt@concetta-sapienza.com (Hoster: ALL-INKL.COM, siehe oben) an mein E-Mail-Postfach bei GMX (1&amp;1 Mail &amp; Media GmbH, Elgendorfer Straße 57, 56410 Montabaur, Deutschland) gesendet.</p>
@@ -165,6 +166,11 @@
           <span class="error" id="e-telefon" data-error-for="telefon" aria-live="polite"></span>
         </div>
         <div class="field">
+          <label for="f-email">E-Mail</label>
+          <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" required aria-describedby="e-email">
+          <span class="error" id="e-email" data-error-for="email" aria-live="polite"></span>
+        </div>
+        <div class="field">
           <label for="f-anliegen">Kurz: Worum geht es? <span class="opt">(optional)</span></label>
           <textarea id="f-anliegen" name="anliegen" rows="4" maxlength="2000"></textarea>
         </div>
@@ -179,7 +185,7 @@
           <span class="error" id="e-einwilligung" data-error-for="einwilligung" aria-live="polite"></span>
         </div>
         <div class="form-hints">
-          <p>Ich melde mich telefonisch bei Ihnen. Die Beratung ersetzt keine ärztliche oder psychotherapeutische Behandlung.</p>
+          <p>Ich melde mich telefonisch oder per E-Mail bei Ihnen. Die Beratung ersetzt keine ärztliche oder psychotherapeutische Behandlung.</p>
           <p>In einer akuten Krise wenden Sie sich bitte an den Notruf <a class="text-link" href="tel:112">112</a> oder die Telefonseelsorge <a class="text-link" href="tel:08001110111">0800&nbsp;111&nbsp;0&nbsp;111</a> (kostenfrei, rund um die Uhr).</p>
         </div>
         <p class="form-status" role="alert"></p>
@@ -189,7 +195,7 @@
     <div data-view="success" class="success" hidden>
       <svg viewBox="0 0 64 64" aria-hidden="true"><path pathLength="1" d="M32 4a28 28 0 1 1 0 56a28 28 0 1 1 0-56Z"/><path pathLength="1" d="M20 33l8 8 16-17"/></svg>
       <h2>Vielen Dank.</h2>
-      <p>Ihre Anfrage ist angekommen. Ich melde mich telefonisch bei Ihnen.</p>
+      <p>Ihre Anfrage ist angekommen. Ich melde mich bei Ihnen.</p>
       <p><button class="btn" type="button" data-close>Schließen</button></p>
     </div>
   </div>

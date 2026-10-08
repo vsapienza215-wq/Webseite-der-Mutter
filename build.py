@@ -180,6 +180,11 @@ def contact_dialog():
           <span class="error" id="e-telefon" data-error-for="telefon" aria-live="polite"></span>
         </div>
         <div class="field">
+          <label for="f-email">E-Mail</label>
+          <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" required aria-describedby="e-email">
+          <span class="error" id="e-email" data-error-for="email" aria-live="polite"></span>
+        </div>
+        <div class="field">
           <label for="f-anliegen">Kurz: Worum geht es? <span class="opt">(optional)</span></label>
           <textarea id="f-anliegen" name="anliegen" rows="4" maxlength="2000"></textarea>
         </div>
@@ -194,7 +199,7 @@ def contact_dialog():
           <span class="error" id="e-einwilligung" data-error-for="einwilligung" aria-live="polite"></span>
         </div>
         <div class="form-hints">
-          <p>Ich melde mich telefonisch bei Ihnen. Die Beratung ersetzt keine ärztliche oder psychotherapeutische Behandlung.</p>
+          <p>Ich melde mich telefonisch oder per E-Mail bei Ihnen. Die Beratung ersetzt keine ärztliche oder psychotherapeutische Behandlung.</p>
           <p>In einer akuten Krise wenden Sie sich bitte an den Notruf <a class="text-link" href="tel:112">112</a> oder die Telefonseelsorge <a class="text-link" href="tel:08001110111">0800&nbsp;111&nbsp;0&nbsp;111</a> (kostenfrei, rund um die Uhr).</p>
         </div>
         <p class="form-status" role="alert"></p>
@@ -204,7 +209,7 @@ def contact_dialog():
     <div data-view="success" class="success" hidden>
       {ICON['check']}
       <h2>Vielen Dank.</h2>
-      <p>Ihre Anfrage ist angekommen. Ich melde mich telefonisch bei Ihnen.</p>
+      <p>Ihre Anfrage ist angekommen. Ich melde mich bei Ihnen.</p>
       <p><button class="btn" type="button" data-close>Schließen</button></p>
     </div>
   </div>

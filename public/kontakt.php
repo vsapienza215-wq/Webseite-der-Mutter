@@ -60,7 +60,7 @@ function clean_line(string $value, int $max): string
 }
 
 /** Minimaler SMTP-Client (SSL auf 465 oder STARTTLS auf 587, AUTH LOGIN). */
-function smtp_send(array $c, string $to, string $subject, string $body): void
+function smtp_send(array $c, string $to, string $subject, string $body, string $replyTo = ''): void
 {
     $remote = ($c['smtp_secure'] === 'ssl' ? 'ssl://' : 'tcp://') . $c['smtp_host'] . ':' . (int) $c['smtp_port'];
     $ctx = stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true]]);
@@ -111,6 +111,7 @@ function smtp_send(array $c, string $to, string $subject, string $body): void
         'Date: ' . date('r'),
         'From: SAPiENZA <' . $c['mail_from'] . '>',
         'To: <' . $to . '>',
+        ...($replyTo !== '' ? ['Reply-To: <' . $replyTo . '>'] : []),
         'Subject: ' . mb_encode_mimeheader($subject, 'UTF-8', 'B'),
         'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . substr(strrchr($c['mail_from'], '@'), 1) . '>',
         'MIME-Version: 1.0',
@@ -123,7 +124,7 @@ function smtp_send(array $c, string $to, string $subject, string $body): void
     fclose($fp);
 }
 
-function php_mail_send(array $c, string $to, string $subject, string $body): void
+function php_mail_send(array $c, string $to, string $subject, string $body, string $replyTo = ''): void
 {
     if (!function_exists('mail')) {
         throw new RuntimeException('PHP mail() ist auf diesem Server deaktiviert');
@@ -134,6 +135,9 @@ function php_mail_send(array $c, string $to, string $subject, string $body): voi
         'Content-Type: text/plain; charset=UTF-8',
         'Content-Transfer-Encoding: 8bit',
     ];
+    if ($replyTo !== '') {
+        $headers[] = 'Reply-To: <' . $replyTo . '>';
+    }
     $ok = mail($to, mb_encode_mimeheader($subject, 'UTF-8', 'B'), $body, implode("\r\n", $headers), '-f' . $c['mail_from']);
     if (!$ok) {
         throw new RuntimeException('PHP mail() hat false zurückgegeben (Server verschickt keine Mails)');
@@ -179,21 +183,26 @@ if (count($hits) >= RATE_LIMIT) {
 
 $vorname  = clean_line((string) ($_POST['vorname'] ?? ''), 60);
 $telefon  = clean_line((string) ($_POST['telefon'] ?? ''), 30);
+$email    = clean_line((string) ($_POST['email'] ?? ''), 120);
 $anliegen = mb_substr(trim((string) ($_POST['anliegen'] ?? '')), 0, 2000, 'UTF-8');
 $einwilligung = ($_POST['einwilligung'] ?? '') === 'ja';
 
-if ($vorname === '' || $telefon === '' || !$einwilligung) {
+if ($vorname === '' || $telefon === '' || $email === '' || !$einwilligung) {
     respond(false, 'Bitte füllen Sie alle Pflichtfelder aus und bestätigen Sie die Einwilligung.', 422);
 }
 if (!preg_match('/^[0-9+()\/\-\s]{6,30}$/', $telefon)) {
     respond(false, 'Bitte prüfen Sie die Telefonnummer.', 422);
+}
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    respond(false, 'Bitte prüfen Sie die E-Mail-Adresse.', 422);
 }
 
 $subject = 'Neue Anfrage über die Website – ' . $vorname;
 $body = "Neue Anfrage über das Kontaktformular\r\n"
       . "=====================================\r\n\r\n"
       . "Vorname:  {$vorname}\r\n"
-      . "Telefon:  {$telefon}\r\n\r\n"
+      . "Telefon:  {$telefon}\r\n"
+      . "E-Mail:   {$email}\r\n\r\n"
       . "Worum geht es?\r\n"
       . ($anliegen !== '' ? str_replace(["\r\n", "\r", "\n"], "\r\n", $anliegen) : '(keine Angabe)') . "\r\n\r\n"
       . "-------------------------------------\r\n"
@@ -202,9 +211,9 @@ $body = "Neue Anfrage über das Kontaktformular\r\n"
 
 try {
     if ($config['smtp_host'] !== '') {
-        smtp_send($config, $config['mail_to'], $subject, $body);
+        smtp_send($config, $config['mail_to'], $subject, $body, $email);
     } else {
-        php_mail_send($config, $config['mail_to'], $subject, $body);
+        php_mail_send($config, $config['mail_to'], $subject, $body, $email);
     }
 } catch (Throwable $e) {
     log_error($e->getMessage());
@@ -214,4 +223,4 @@ try {
 $hits[] = time();
 @file_put_contents($rateFile, implode(',', $hits), LOCK_EX);
 
-respond(true, 'Vielen Dank. Ihre Anfrage ist angekommen. Ich melde mich telefonisch bei Ihnen.');
+respond(true, 'Vielen Dank. Ihre Anfrage ist angekommen. Ich melde mich bei Ihnen.');
