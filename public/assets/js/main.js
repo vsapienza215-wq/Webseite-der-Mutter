@@ -194,7 +194,7 @@
     if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       if (!reduceMotion) {
         var rz = 0, rx = 0, tz = 0, tx = 0, swayRaf = 0;
-        var MAX_SIDE = 5, MAX_TILT = 12;
+        var MAX_SIDE = 1.7, MAX_TILT = 4;   // dezent: ca. ein Drittel der ursprünglichen Werte
         var swayLoop = function () {
           rz += (tz - rz) * 0.06;
           rx += (tx - rx) * 0.06;
