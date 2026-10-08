@@ -228,8 +228,8 @@ strong { color: var(--ink); font-weight: 500; }
 /* scharfe, farbige Ebene wird beim Hover eingeblendet (Überblendung statt Filter-Animation) */
 .hero-flower__sharp {
   position: absolute; inset: 0;
-  filter: saturate(1.35);
-  opacity: 0; transition: opacity .5s var(--ease-out);
+  filter: saturate(.92);
+  opacity: 0; transition: opacity 2.6s cubic-bezier(.5, 0, .3, 1);
 }
 .hero-flower:hover .hero-flower__sharp, .hero-flower.is-sharp .hero-flower__sharp { opacity: 1; }
 @media (prefers-reduced-motion: no-preference) {
