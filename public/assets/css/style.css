@@ -200,14 +200,19 @@ strong { color: var(--ink); font-weight: 500; }
 }
 .hero h1 { font-size: clamp(1.9rem, .95rem + 3vw, 3.75rem); line-height: 1.1; }
 .hero { overflow: hidden; }
-.hero__content { position: relative; max-width: 38rem; margin-left: auto; }
+/* Text zentriert über der Blume; die Maus geht durch den Text zur Blume */
+.hero__content { position: relative; max-width: 44rem; margin-inline: auto; text-align: center; pointer-events: none; }
+.hero__content h1, .hero__content p { text-shadow: 0 0 22px rgba(255, 255, 255, .95), 0 0 8px rgba(255, 255, 255, .85), 0 0 2px #fff; }
+.hero__content .hero__sub p { color: var(--ink); }
+.hero__sub { margin-inline: auto; }
 .hero .container { pointer-events: none; }
-.hero .container > * { pointer-events: auto; }
 
 /* Blume im Hero: unscharf und gedämpft, bei Berührung klar und farbig */
 .hero-flower {
-  position: absolute; left: 0; bottom: 0; z-index: 1;
-  width: clamp(15rem, 36vw, 31rem); transform-origin: 0 100%;
+  position: absolute; bottom: 0; z-index: 1;
+  --fw: clamp(20rem, 44vw, 38rem);
+  width: var(--fw); left: calc(50% - var(--fw) * .61);
+  transform-origin: 0 100%;
 }
 .hero-flower { perspective: 900px; perspective-origin: 30% 60%; }
 .hero-flower__sway { position: relative; transform-origin: 0 100%; transform-style: preserve-3d; will-change: transform; }
@@ -228,9 +233,7 @@ strong { color: var(--ink); font-weight: 500; }
   to { opacity: 1; transform: none; }
 }
 @media (max-width: 48rem) {
-  .hero { align-items: start; padding-bottom: calc(min(64vw, 22rem) + 2rem); }
-  .hero__content { margin-left: 0; }
-  .hero-flower { width: min(64vw, 22rem); }
+  .hero-flower { --fw: min(96vw, 26rem); }
   .hero .scroll-cue { display: none; }
 }
 .hero__sub { margin-top: clamp(2rem, 4vw, 3rem); max-width: 30rem; }
@@ -272,7 +275,6 @@ strong { color: var(--ink); font-weight: 500; }
 @media (max-width: 40rem) {
   .path-line, .path-dot-anchor { left: .45rem; width: .7rem; }
   .path-wrap .container { width: min(100% - 4.25rem, var(--narrow)); margin-left: 2.75rem; margin-right: 1.5rem; }
-  .hero .container { width: min(100% - 4.25rem, var(--narrow)); margin-left: 2.75rem; margin-right: 1.5rem; }
   .path-wrap .closing .container { margin-inline: auto; width: min(100% - 3rem, var(--narrow)); }
 }
 
