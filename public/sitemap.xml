@@ -16,6 +16,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://concetta-sapienza.com/datenschutz/</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://concetta-sapienza.com/impressum/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>

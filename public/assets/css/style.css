@@ -554,7 +554,24 @@ strong { color: var(--ink); font-weight: 500; }
 .format--feature.has-sheen::after { z-index: 0; }
 .format--feature > h3, .format--feature > p { position: relative; z-index: 1; }
 
-@media (prefers-reduced-motion: reduce) {
+/* Datenschutz-Hinweis (keine Einwilligung nötig – reine Information) */
+.privacy-note {
+  position: fixed; left: 1rem; bottom: 1rem; z-index: 55;
+  width: min(100% - 2rem, 23rem); padding: 1.35rem 1.5rem 1.25rem;
+  background: #fff; border: 1px solid rgba(169, 137, 97, .3); border-radius: 4px;
+  box-shadow: 0 18px 50px -20px rgba(51, 37, 31, .35);
+  font-size: .9375rem; line-height: 1.55;
+  animation: note-in .8s var(--ease-out) 1.2s both;
+}
+.privacy-note[hidden] { display: none; }
+.privacy-note.is-leaving { animation: note-out .35s var(--ease-soft) forwards; }
+.privacy-note__title { font-family: var(--serif); font-size: 1.375rem; color: var(--ink); line-height: 1.2; margin-bottom: .35rem; }
+.privacy-note__actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1rem; }
+.btn--small { min-height: 2.75rem; padding: .6rem 1.3rem; font-size: .9375rem; }
+@keyframes note-in { from { opacity: 0; transform: translateY(16px); } }
+@keyframes note-out { to { opacity: 0; transform: translateY(12px); } }
+@media (max-width: 30rem) { .privacy-note { left: .75rem; right: .75rem; bottom: .75rem; width: auto; } }
+
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .scroll-cue { display: none; }
   .path-line .draw { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }

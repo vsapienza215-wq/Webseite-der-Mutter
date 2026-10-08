@@ -219,6 +219,22 @@
     }
   }
 
+  /* Datenschutz-Hinweis: erscheint, bis er einmal geschlossen wurde */
+  var note = document.querySelector('.privacy-note');
+  if (note) {
+    var seen = false;
+    try { seen = localStorage.getItem('sapienza-hinweis') === '1'; } catch (e) {}
+    if (!seen) {
+      note.hidden = false;
+      note.querySelector('[data-privacy-ok]').addEventListener('click', function () {
+        try { localStorage.setItem('sapienza-hinweis', '1'); } catch (e) {}
+        if (reduceMotion) { note.hidden = true; return; }
+        note.classList.add('is-leaving');
+        setTimeout(function () { note.hidden = true; }, 350);
+      });
+    }
+  }
+
   /* Kontakt-Dialog */
   var dialog = document.getElementById('kontakt');
   if (!dialog || typeof dialog.showModal !== 'function') return;

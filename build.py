@@ -150,6 +150,17 @@ def footer():
 </footer>"""
 
 
+def privacy_notice():
+    return """<aside class="privacy-note" role="region" aria-label="Hinweis zum Datenschutz" hidden>
+  <p class="privacy-note__title">Ganz ohne Cookies.</p>
+  <p>Diese Website verwendet keine Cookies, kein Tracking und keine Werbe- oder Analysedienste.</p>
+  <div class="privacy-note__actions">
+    <button class="btn btn--small" type="button" data-privacy-ok>Alles klar</button>
+    <a class="text-link" href="/datenschutz/">Datenschutz</a>
+  </div>
+</aside>"""
+
+
 def contact_dialog():
     return f"""<dialog class="modal" id="kontakt" aria-labelledby="kontakt-titel">
   <div class="modal__inner">
@@ -269,6 +280,7 @@ def render(meta, body):
 </main>
 {footer()}
 {contact_dialog()}
+{privacy_notice()}
 </body>
 </html>
 """
