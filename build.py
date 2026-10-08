@@ -81,6 +81,30 @@ def parse(path):
     return meta, raw[m.end():]
 
 
+def logo_inline():
+    """Logo als Inline-SVG, je Buchstabe eine Gruppe (für den Hover-Effekt im Header)."""
+    raw = (OUT / "assets/img/logo.svg").read_text(encoding="utf-8")
+    vb = re.search(r'viewBox="([^"]+)"', raw).group(1)
+    d = re.search(r' d="([^"]+)"', raw).group(1)
+    subs = ["M" + x for x in d.split("M") if x.strip()]
+
+    def xr(path):
+        n = [float(v) for v in re.findall(r"-?\d*\.?\d+", path)]
+        return min(n[0::2]), max(n[0::2])
+
+    groups = []
+    for x0, x1, path in sorted((*xr(p), p) for p in subs):
+        for g in groups:
+            if x0 < g["x1"] - 0.5 and x1 > g["x0"] + 0.5:
+                g["p"].append(path); g["x0"] = min(g["x0"], x0); g["x1"] = max(g["x1"], x1)
+                break
+        else:
+            groups.append({"x0": x0, "x1": x1, "p": [path]})
+    letters = "".join(f'<path d="{"".join(g["p"])}"/>' for g in groups)
+    return (f'<svg class="brand__logo" viewBox="{vb}" width="413" height="61" aria-hidden="true" focusable="false">'
+            f'<g fill="#33251F" fill-rule="evenodd">{letters}</g></svg>')
+
+
 def header(current):
     items = []
     for href, label in NAV:
@@ -89,7 +113,7 @@ def header(current):
     return f"""<a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="brand" href="/" aria-label="{BRAND} – zur Startseite"><img src="/assets/img/logo.svg" alt="{BRAND}" width="413" height="61"></a>
+    <a class="brand" href="/" aria-label="{BRAND} – zur Startseite">{logo_inline()}</a>
     <nav class="nav" aria-label="Hauptnavigation">
       <ul>{''.join(items)}</ul>
     </nav>

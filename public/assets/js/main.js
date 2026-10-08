@@ -185,10 +185,47 @@
     });
   }
 
-  /* Hero-Blume: auf Touch-Geräten per Antippen scharf/farbig */
+  /* Hero-Blume: neigt sich zur Maus (Drehpunkt Stielansatz unten links);
+     ein kleiner Kreis um den Zeiger wird scharf und farbig.
+     Auf Touch-Geräten macht Antippen die ganze Blume scharf. */
   var flower = document.querySelector('.hero-flower');
-  if (flower && window.matchMedia('(hover: none)').matches) {
-    flower.addEventListener('click', function () { flower.classList.toggle('is-sharp'); });
+  var sway = flower && flower.querySelector('.hero-flower__sway');
+  if (flower && sway) {
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      var angle = 0, targetAngle = 0, swayRaf = 0;
+      var MAX_DEG = 5;
+      function swayLoop() {
+        angle += (targetAngle - angle) * 0.06;
+        sway.style.transform = 'rotate(' + angle.toFixed(3) + 'deg)';
+        swayRaf = Math.abs(targetAngle - angle) > 0.01 ? requestAnimationFrame(swayLoop) : 0;
+      }
+      if (!reduceMotion) {
+        document.addEventListener('pointermove', function (e) {
+          if (e.pointerType !== 'mouse') return;
+          var r = flower.getBoundingClientRect();
+          if (r.bottom < 0) return;                       // Hero nicht sichtbar
+          var cx = r.left + r.width * 0.5;
+          var t = (e.clientX - cx) / (window.innerWidth * 0.5);
+          targetAngle = Math.max(-1, Math.min(1, t)) * MAX_DEG;
+          if (!swayRaf) swayRaf = requestAnimationFrame(swayLoop);
+        }, { passive: true });
+      }
+
+      flower.addEventListener('pointermove', function (e) {
+        // Mausposition in das ungedrehte Koordinatensystem der Blume zurückrechnen
+        var r = flower.getBoundingClientRect();
+        var ox = e.clientX - r.left, oy = e.clientY - r.bottom;      // relativ zum Drehpunkt
+        var rad = -angle * Math.PI / 180;
+        var x = ox * Math.cos(rad) - oy * Math.sin(rad);
+        var y = ox * Math.sin(rad) + oy * Math.cos(rad) + r.height;
+        flower.style.setProperty('--fx', x.toFixed(1) + 'px');
+        flower.style.setProperty('--fy', y.toFixed(1) + 'px');
+        flower.classList.add('is-lit');
+      });
+      flower.addEventListener('pointerleave', function () { flower.classList.remove('is-lit'); });
+    } else {
+      flower.addEventListener('click', function () { flower.classList.toggle('is-sharp'); });
+    }
   }
 
   /* Kontakt-Dialog */
