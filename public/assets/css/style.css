@@ -459,6 +459,35 @@ strong { color: var(--ink); font-weight: 500; }
 @keyframes rise { to { opacity: 1; transform: none; } }
 @keyframes fade-in-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
+/* ---------- Maus-Effekte (nur Desktop, per JS aktiviert) ---------- */
+.cursor-glow {
+  position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none;
+  width: 560px; height: 560px; margin: -280px 0 0 -280px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 164, 112, .16) 0%, rgba(201, 164, 112, .07) 32%, rgba(201, 164, 112, 0) 68%);
+  opacity: 0; transition: opacity .8s var(--ease-soft); will-change: transform;
+}
+.cursor-glow.is-on { opacity: 1; }
+.site-footer { position: relative; z-index: 2; }
+.closing .btn { transition: color .35s var(--ease-out), border-color .35s, transform .5s var(--ease-out); }
+
+.has-sheen { position: relative; isolation: isolate; }
+.has-sheen::before {
+  content: ""; position: absolute; inset: -1px; z-index: -1; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(169, 137, 97, .16), transparent 70%);
+  opacity: 0; transition: opacity .5s var(--ease-out);
+}
+.has-sheen::after {
+  content: ""; position: absolute; inset: -1px; z-index: -1; pointer-events: none; padding: 1px;
+  background: radial-gradient(200px circle at var(--mx, 50%) var(--my, 50%), rgba(169, 137, 97, .9), transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity .5s var(--ease-out);
+}
+.has-sheen:hover::before, .has-sheen:hover::after { opacity: 1; }
+.format--feature.has-sheen::before { background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgba(217, 196, 166, .14), transparent 70%); z-index: 0; }
+.format--feature.has-sheen::after { z-index: 0; }
+.format--feature > h3, .format--feature > p { position: relative; z-index: 1; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .scroll-cue { display: none; }

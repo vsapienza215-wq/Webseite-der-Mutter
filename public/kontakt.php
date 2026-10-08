@@ -10,15 +10,9 @@
 
 declare(strict_types=1);
 
-// Absender-Standard: Adresse der Domain, auf der die Seite tatsächlich läuft (wichtig für SPF/Zustellbarkeit)
-$siteHost = strtolower(preg_replace('/^www\./i', '', (string) parse_url('http://' . ($_SERVER['HTTP_HOST'] ?? ''), PHP_URL_HOST)));
-if (!preg_match('/^[a-z0-9.-]+\.[a-z]{2,}$/', $siteHost)) {
-    $siteHost = 'concetta-sapienza.com';
-}
-
 $config = array_merge([
-    'mail_to'     => 'mumsapienza@gmail.com',
-    'mail_from'   => 'kontakt@' . $siteHost,
+    'mail_to'     => 'kontakt@concetta-sapienza.com',
+    'mail_from'   => 'kontakt@concetta-sapienza.com',
     'smtp_host'   => '',
     'smtp_port'   => 587,
     'smtp_secure' => 'tls',

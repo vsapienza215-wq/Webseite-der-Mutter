@@ -14,7 +14,7 @@
  *                  Hostinger smtp.hostinger.com 465 ssl
  */
 return [
-    'mail_to'     => 'mumsapienza@gmail.com',        // Empfänger der Anfragen
+    'mail_to'     => 'kontakt@concetta-sapienza.com',        // Empfänger der Anfragen
     'mail_from'   => 'kontakt@concetta-sapienza.com', // muss zum SMTP-Postfach passen
     'smtp_host'   => '',
     'smtp_port'   => 587,

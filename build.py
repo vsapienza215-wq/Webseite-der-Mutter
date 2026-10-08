@@ -21,7 +21,7 @@ OUT = ROOT / "public"
 
 SITE = "https://concetta-sapienza.com"   # Domain bei Bedarf hier ändern
 BRAND = "SAPiENZA"
-EMAIL = "csapienza@gmx.de"
+EMAIL = "kontakt@concetta-sapienza.com"
 
 NAV = [("/", "Startseite"), ("/beratung/", "Beratung"), ("/ueber-mich/", "Über mich")]
 FOOTER_NAV = [
