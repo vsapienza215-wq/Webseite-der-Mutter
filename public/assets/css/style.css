@@ -209,21 +209,17 @@ strong { color: var(--ink); font-weight: 500; }
   position: absolute; left: 0; bottom: 0; z-index: 1;
   width: clamp(15rem, 36vw, 31rem); transform-origin: 0 100%;
 }
-@property --r { syntax: "<length>"; inherits: true; initial-value: 0px; }
-.hero-flower__sway { position: relative; transform-origin: 0 100%; will-change: transform; }
+.hero-flower { perspective: 900px; perspective-origin: 30% 60%; }
+.hero-flower__sway { position: relative; transform-origin: 0 100%; transform-style: preserve-3d; will-change: transform; }
 .hero-flower img { display: block; width: 100%; height: auto; }
 .hero-flower__soft { filter: blur(7px) saturate(.38); opacity: .9; }
-/* scharfe, farbige Ebene – nur als kleiner Kreis um die Maus sichtbar */
+/* scharfe, farbige Ebene wird beim Hover eingeblendet (Überblendung statt Filter-Animation) */
 .hero-flower__sharp {
   position: absolute; inset: 0;
   filter: saturate(1.35);
-  --r: 0px;
-  -webkit-mask-image: radial-gradient(circle var(--r) at var(--fx, 50%) var(--fy, 50%), #000 55%, transparent 100%);
-          mask-image: radial-gradient(circle var(--r) at var(--fx, 50%) var(--fy, 50%), #000 55%, transparent 100%);
-  transition: --r .25s var(--ease-out);
+  opacity: 0; transition: opacity .5s var(--ease-out);
 }
-.hero-flower.is-lit .hero-flower__sharp { --r: 28px; }
-.hero-flower.is-sharp .hero-flower__sharp { -webkit-mask-image: none; mask-image: none; }
+.hero-flower:hover .hero-flower__sharp, .hero-flower.is-sharp .hero-flower__sharp { opacity: 1; }
 @media (prefers-reduced-motion: no-preference) {
   .hero-flower { animation: flower-in 2.4s var(--ease-out) .2s both; }
 }

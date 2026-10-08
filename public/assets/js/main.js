@@ -185,44 +185,33 @@
     });
   }
 
-  /* Hero-Blume: neigt sich zur Maus (Drehpunkt Stielansatz unten links);
-     ein kleiner Kreis um den Zeiger wird scharf und farbig.
-     Auf Touch-Geräten macht Antippen die ganze Blume scharf. */
+  /* Hero-Blume: neigt sich zur Maus – links/rechts (Drehung um den Stielansatz)
+     und vor/zurück (3D-Kippung), je nach Mausposition oben/unten.
+     Beim Hover wird sie scharf und farbig; auf Touch-Geräten per Antippen. */
   var flower = document.querySelector('.hero-flower');
   var sway = flower && flower.querySelector('.hero-flower__sway');
   if (flower && sway) {
     if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      var angle = 0, targetAngle = 0, swayRaf = 0;
-      var MAX_DEG = 5;
-      function swayLoop() {
-        angle += (targetAngle - angle) * 0.06;
-        sway.style.transform = 'rotate(' + angle.toFixed(3) + 'deg)';
-        swayRaf = Math.abs(targetAngle - angle) > 0.01 ? requestAnimationFrame(swayLoop) : 0;
-      }
       if (!reduceMotion) {
+        var rz = 0, rx = 0, tz = 0, tx = 0, swayRaf = 0;
+        var MAX_SIDE = 5, MAX_TILT = 12;
+        var swayLoop = function () {
+          rz += (tz - rz) * 0.06;
+          rx += (tx - rx) * 0.06;
+          sway.style.transform = 'rotate(' + rz.toFixed(3) + 'deg) rotateX(' + rx.toFixed(3) + 'deg)';
+          swayRaf = Math.abs(tz - rz) + Math.abs(tx - rx) > 0.01 ? requestAnimationFrame(swayLoop) : 0;
+        };
         document.addEventListener('pointermove', function (e) {
           if (e.pointerType !== 'mouse') return;
           var r = flower.getBoundingClientRect();
-          if (r.bottom < 0) return;                       // Hero nicht sichtbar
-          var cx = r.left + r.width * 0.5;
-          var t = (e.clientX - cx) / (window.innerWidth * 0.5);
-          targetAngle = Math.max(-1, Math.min(1, t)) * MAX_DEG;
+          if (r.bottom < 0) return;                         // Hero nicht sichtbar
+          var h = (e.clientX - (r.left + r.width * 0.5)) / (window.innerWidth * 0.5);
+          var v = (e.clientY - (r.top + r.height * 0.45)) / (window.innerHeight * 0.5);
+          tz = Math.max(-1, Math.min(1, h)) * MAX_SIDE;
+          tx = Math.max(-1, Math.min(1, -v)) * MAX_TILT;    // Maus oben: kippt nach hinten, unten: nach vorne
           if (!swayRaf) swayRaf = requestAnimationFrame(swayLoop);
         }, { passive: true });
       }
-
-      flower.addEventListener('pointermove', function (e) {
-        // Mausposition in das ungedrehte Koordinatensystem der Blume zurückrechnen
-        var r = flower.getBoundingClientRect();
-        var ox = e.clientX - r.left, oy = e.clientY - r.bottom;      // relativ zum Drehpunkt
-        var rad = -angle * Math.PI / 180;
-        var x = ox * Math.cos(rad) - oy * Math.sin(rad);
-        var y = ox * Math.sin(rad) + oy * Math.cos(rad) + r.height;
-        flower.style.setProperty('--fx', x.toFixed(1) + 'px');
-        flower.style.setProperty('--fy', y.toFixed(1) + 'px');
-        flower.classList.add('is-lit');
-      });
-      flower.addEventListener('pointerleave', function () { flower.classList.remove('is-lit'); });
     } else {
       flower.addEventListener('click', function () { flower.classList.toggle('is-sharp'); });
     }
