@@ -473,7 +473,15 @@ strong { color: var(--ink); font-weight: 500; }
 .cursor-dot.is-hover span { transform: scale(1); background-color: rgba(169, 137, 97, .08); }
 .cursor-dot.is-down span { transform: scale(.85); }
 .cursor-dot.is-hover.is-down span { transform: scale(.8); }
-html:has(dialog[open]) .cursor-dot { opacity: 0; }
+.cursor-trail {
+  position: fixed; top: 0; left: 0; z-index: 59; pointer-events: none; border-radius: 50%;
+  background: #c9a470; box-shadow: 0 0 6px 1px rgba(201, 164, 112, .55);
+  opacity: 0; transition: opacity .5s var(--ease-soft); will-change: transform;
+}
+.cursor-dot.is-on.is-moving ~ .cursor-trail, body:has(.cursor-dot.is-on.is-moving) .cursor-trail { opacity: var(--o); }
+.cursor-dot span { box-shadow: 0 0 8px rgba(201, 164, 112, .45); }
+.cursor-dot.is-hover span { box-shadow: none; }
+html:has(dialog[open]) .cursor-dot, html:has(dialog[open]) .cursor-trail { opacity: 0 !important; }
 .site-footer { position: relative; z-index: 2; }
 .closing .btn { transition: color .35s var(--ease-out), border-color .35s, transform .5s var(--ease-out); }
 

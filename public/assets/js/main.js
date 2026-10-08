@@ -143,25 +143,52 @@
      Nur mit echter Maus und ohne „Bewegung reduzieren“. */
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (finePointer && !reduceMotion) {
-    // Goldener Punkt folgt der Maus weich; über Klickbarem wird er zum feinen Ring
+    // Goldener Punkt folgt der Maus deutlich verzögert, mit kurzer leuchtender Spur;
+    // über Klickbarem wird er zum feinen Ring
     var dot = document.createElement('div');
     dot.className = 'cursor-dot';
     dot.setAttribute('aria-hidden', 'true');
     dot.appendChild(document.createElement('span'));
+
+    var TRAIL = 20;
+    var trail = [];
+    for (var ti = 0; ti < TRAIL; ti++) {
+      var tEl = document.createElement('i');
+      tEl.className = 'cursor-trail';
+      var k = 1 - ti / TRAIL;
+      tEl.style.width = tEl.style.height = (1.5 + 4 * k).toFixed(1) + 'px';
+      tEl.style.marginLeft = tEl.style.marginTop = (-(1.5 + 4 * k) / 2).toFixed(2) + 'px';
+      tEl.style.setProperty('--o', (0.55 * k).toFixed(2));
+      document.body.appendChild(tEl);
+      trail.push({ el: tEl, x: 0, y: 0 });
+    }
     document.body.appendChild(dot);
 
     var mx = 0, my = 0, dx = 0, dy = 0, dotRaf = 0, started = false;
     var interactive = 'a, button, summary, label, input, textarea, [data-open-contact]';
     function dotLoop() {
-      dx += (mx - dx) * 0.2;
-      dy += (my - dy) * 0.2;
+      dx += (mx - dx) * 0.065;
+      dy += (my - dy) * 0.065;
       dot.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0)';
-      dotRaf = Math.abs(mx - dx) + Math.abs(my - dy) > 0.2 ? requestAnimationFrame(dotLoop) : 0;
+      var px = dx, py = dy, spread = 0;
+      for (var i = 0; i < TRAIL; i++) {
+        var t = trail[i];
+        t.x += (px - t.x) * 0.5;
+        t.y += (py - t.y) * 0.5;
+        t.el.style.transform = 'translate3d(' + t.x.toFixed(1) + 'px,' + t.y.toFixed(1) + 'px,0)';
+        spread += Math.abs(px - t.x) + Math.abs(py - t.y);
+        px = t.x; py = t.y;
+      }
+      dot.classList.toggle('is-moving', spread > 6);
+      dotRaf = Math.abs(mx - dx) + Math.abs(my - dy) + spread > 0.3 ? requestAnimationFrame(dotLoop) : 0;
     }
     document.addEventListener('pointermove', function (e) {
       if (e.pointerType !== 'mouse') return;
       mx = e.clientX; my = e.clientY;
-      if (!started) { dx = mx; dy = my; started = true; }
+      if (!started) {
+        dx = mx; dy = my; started = true;
+        trail.forEach(function (t) { t.x = mx; t.y = my; });
+      }
       dot.classList.add('is-on');
       var t = e.target;
       dot.classList.toggle('is-hover', !!(t && t.closest && t.closest(interactive)));
