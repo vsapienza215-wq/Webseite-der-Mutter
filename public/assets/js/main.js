@@ -143,26 +143,33 @@
      Nur mit echter Maus und ohne „Bewegung reduzieren“. */
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (finePointer && !reduceMotion) {
-    var glow = document.createElement('div');
-    glow.className = 'cursor-glow';
-    glow.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(glow);
+    // Goldener Punkt folgt der Maus weich; über Klickbarem wird er zum feinen Ring
+    var dot = document.createElement('div');
+    dot.className = 'cursor-dot';
+    dot.setAttribute('aria-hidden', 'true');
+    dot.appendChild(document.createElement('span'));
+    document.body.appendChild(dot);
 
-    var mx = -999, my = -999, gx = mx, gy = my, glowRaf = 0;
-    function glowLoop() {
-      gx += (mx - gx) * 0.12;
-      gy += (my - gy) * 0.12;
-      glow.style.transform = 'translate3d(' + gx.toFixed(1) + 'px,' + gy.toFixed(1) + 'px,0)';
-      glowRaf = Math.abs(mx - gx) + Math.abs(my - gy) > 0.3 ? requestAnimationFrame(glowLoop) : 0;
+    var mx = 0, my = 0, dx = 0, dy = 0, dotRaf = 0, started = false;
+    var interactive = 'a, button, summary, label, input, textarea, [data-open-contact]';
+    function dotLoop() {
+      dx += (mx - dx) * 0.2;
+      dy += (my - dy) * 0.2;
+      dot.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0)';
+      dotRaf = Math.abs(mx - dx) + Math.abs(my - dy) > 0.2 ? requestAnimationFrame(dotLoop) : 0;
     }
     document.addEventListener('pointermove', function (e) {
       if (e.pointerType !== 'mouse') return;
-      if (gx === -999) { gx = e.clientX; gy = e.clientY; }
       mx = e.clientX; my = e.clientY;
-      glow.classList.add('is-on');
-      if (!glowRaf) glowRaf = requestAnimationFrame(glowLoop);
+      if (!started) { dx = mx; dy = my; started = true; }
+      dot.classList.add('is-on');
+      var t = e.target;
+      dot.classList.toggle('is-hover', !!(t && t.closest && t.closest(interactive)));
+      if (!dotRaf) dotRaf = requestAnimationFrame(dotLoop);
     }, { passive: true });
-    document.documentElement.addEventListener('mouseleave', function () { glow.classList.remove('is-on'); });
+    document.addEventListener('pointerdown', function () { dot.classList.add('is-down'); });
+    document.addEventListener('pointerup', function () { dot.classList.remove('is-down'); });
+    document.documentElement.addEventListener('mouseleave', function () { dot.classList.remove('is-on'); });
 
     // Haupt-Buttons ziehen sich minimal zur Maus
     Array.prototype.forEach.call(document.querySelectorAll('.closing .btn'), function (btn) {

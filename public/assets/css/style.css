@@ -460,13 +460,20 @@ strong { color: var(--ink); font-weight: 500; }
 @keyframes fade-in-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 /* ---------- Maus-Effekte (nur Desktop, per JS aktiviert) ---------- */
-.cursor-glow {
-  position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none;
-  width: 560px; height: 560px; margin: -280px 0 0 -280px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(201, 164, 112, .16) 0%, rgba(201, 164, 112, .07) 32%, rgba(201, 164, 112, 0) 68%);
-  opacity: 0; transition: opacity .8s var(--ease-soft); will-change: transform;
+.cursor-dot {
+  position: fixed; top: 0; left: 0; z-index: 60; pointer-events: none;
+  width: 0; height: 0; opacity: 0; transition: opacity .4s var(--ease-soft); will-change: transform;
 }
-.cursor-glow.is-on { opacity: 1; }
+.cursor-dot.is-on { opacity: 1; }
+.cursor-dot span {
+  position: absolute; left: -18px; top: -18px; width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--line);
+  transform: scale(.2); transition: transform .45s var(--ease-out), background-color .35s var(--ease-out);
+}
+.cursor-dot.is-hover span { transform: scale(1); background-color: rgba(169, 137, 97, .08); }
+.cursor-dot.is-down span { transform: scale(.85); }
+.cursor-dot.is-hover.is-down span { transform: scale(.8); }
+html:has(dialog[open]) .cursor-dot { opacity: 0; }
 .site-footer { position: relative; z-index: 2; }
 .closing .btn { transition: color .35s var(--ease-out), border-color .35s, transform .5s var(--ease-out); }
 
