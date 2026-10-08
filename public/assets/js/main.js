@@ -95,8 +95,6 @@
       var y = window.scrollY;
       if (header) {
         header.classList.toggle('is-scrolled', y > 8);
-        var modalOpen = document.querySelector('dialog[open]');
-        header.classList.toggle('is-hidden', !modalOpen && y > lastY && y > 320 && !header.contains(document.activeElement));
       }
       lastY = y;
       if (!reduceMotion) updateProgress();
