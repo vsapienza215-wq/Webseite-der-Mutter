@@ -187,6 +187,12 @@
     });
   }
 
+  /* Hero-Blume: auf Touch-Geräten per Antippen scharf/farbig */
+  var flower = document.querySelector('.hero-flower');
+  if (flower && window.matchMedia('(hover: none)').matches) {
+    flower.addEventListener('click', function () { flower.classList.toggle('is-sharp'); });
+  }
+
   /* Kontakt-Dialog */
   var dialog = document.getElementById('kontakt');
   if (!dialog || typeof dialog.showModal !== 'function') return;
