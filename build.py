@@ -274,12 +274,20 @@ def render(meta, body):
 """
 
 
+def version_images(html):
+    """Hängt an Bild-URLs eine Prüfsumme an – geänderte Bilder werden so nie aus dem Cache geladen."""
+    def repl(m):
+        f = OUT / m.group(1).lstrip("/")
+        return f"{m.group(1)}?v={hashlib.sha1(f.read_bytes()).hexdigest()[:8]}" if f.exists() else m.group(1)
+    return re.sub(r"(/assets/img/[\w.-]+\.(?:webp|jpg|png|svg))(?![?\w])", repl, html)
+
+
 def main():
     pages = []
     for f in sorted(SRC.glob("*.html")):
         meta, body = parse(f)
         meta["_name"] = f.stem
-        html = render(meta, body)
+        html = version_images(render(meta, body))
         target = OUT / meta["path"].lstrip("/") / "index.html" if meta["path"].endswith("/") else OUT / meta["path"].lstrip("/")
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(html, encoding="utf-8")

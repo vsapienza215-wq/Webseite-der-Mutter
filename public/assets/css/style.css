@@ -217,7 +217,7 @@ strong { color: var(--ink); font-weight: 500; }
 /* Blume im Hero: unscharf und gedämpft, bei Berührung klar und farbig */
 .hero-flower {
   position: absolute; bottom: 0; z-index: 1;
-  --fw: clamp(15rem, 30vw, 28rem);
+  --fw: min(clamp(15rem, 30vw, 28rem), 50svh);
   width: var(--fw); left: calc(50% - var(--fw) * .533);   /* Stiel genau mittig */
   transform-origin: 53.3% 100%;
 }
