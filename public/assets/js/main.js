@@ -164,7 +164,7 @@
     document.documentElement.addEventListener('mouseleave', function () { glow.classList.remove('is-on'); });
 
     // Haupt-Buttons ziehen sich minimal zur Maus
-    Array.prototype.forEach.call(document.querySelectorAll('.closing .btn'), function (btn) {
+    Array.prototype.forEach.call(document.querySelectorAll('.btn--circle'), function (btn) {
       btn.addEventListener('pointermove', function (e) {
         var r = btn.getBoundingClientRect();
         var dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
@@ -175,7 +175,7 @@
     });
 
     // Karten: Goldschimmer folgt der Maus
-    Array.prototype.forEach.call(document.querySelectorAll('.format, .flow li, .box'), function (card) {
+    Array.prototype.forEach.call(document.querySelectorAll('.format, .topic, .info, .box:not(.box--quiet)'), function (card) {
       card.classList.add('has-sheen');
       card.addEventListener('pointermove', function (e) {
         var r = card.getBoundingClientRect();
@@ -217,6 +217,25 @@
     } else {
       flower.addEventListener('click', function () { flower.classList.toggle('is-sharp'); });
     }
+  }
+
+  /* Mobil-Menü */
+  var toggle = document.querySelector('.nav-toggle');
+  if (toggle && header) {
+    var setNav = function (open) {
+      header.classList.toggle('nav-open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.querySelector('.nav-toggle__label').textContent = open ? 'Schließen' : 'Menü';
+      doc.style.overflow = open ? 'hidden' : '';
+    };
+    toggle.addEventListener('click', function () { setNav(!header.classList.contains('nav-open')); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && header.classList.contains('nav-open')) { setNav(false); toggle.focus(); }
+    });
+    Array.prototype.forEach.call(header.querySelectorAll('.nav a'), function (a) {
+      a.addEventListener('click', function () { setNav(false); });
+    });
+    window.matchMedia('(min-width: 64.01rem)').addEventListener('change', function (m) { if (m.matches) setNav(false); });
   }
 
   /* Datenschutz-Hinweis: erscheint, bis er einmal geschlossen wurde */

@@ -1,60 +1,7 @@
 [
  {
-  "@type": "FAQPage",
-  "@id": "{SITE}/beratung/#faq",
-  "mainEntity": [
-   {
-    "@type": "Question",
-    "name": "Was kostet die Gesundheitsberatung?",
-    "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Das Kennenlerngespräch dauert 20 Minuten und ist kostenlos. Ein Beratungsgespräch dauert 60 Minuten und kostet 80 €. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
-    }
-   },
-   {
-    "@type": "Question",
-    "name": "Übernimmt die Krankenkasse die Kosten?",
-    "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Nein. Die Beratung ist eine Selbstzahlerleistung."
-    }
-   },
-   {
-    "@type": "Question",
-    "name": "Wie viele Termine brauche ich?",
-    "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Das richtet sich nach Ihrem Anliegen. Nach dem Kennenlernen besprechen wir gemeinsam, was sinnvoll ist. Mein Ziel ist, dass Sie Ihren Weg wieder selbstständig gehen können."
-    }
-   },
-   {
-    "@type": "Question",
-    "name": "Wo findet die Beratung statt?",
-    "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Vor Ort in Kempten (Allgäu), bei einem Spaziergang, online per Video oder am Telefon. Online und telefonisch berate ich deutschlandweit."
-    }
-   },
-   {
-    "@type": "Question",
-    "name": "Ist die Beratung eine Therapie?",
-    "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Nein. Ich biete Gesundheitsberatung mit psychologischen Aspekten an – keine Diagnose, keine Behandlung und keine Therapie. Die Beratung ersetzt keine ärztliche oder psychotherapeutische Behandlung. Bei Erkrankungen kann sie begleitend und ergänzend zur ärztlichen Behandlung stattfinden."
-    }
-   },
-   {
-    "@type": "Question",
-    "name": "Welche Rolle spielt Ayurveda?",
-    "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Ich bin zertifizierte Ayurveda-Gesundheitsberaterin. Die ganzheitliche Sichtweise des Ayurveda – dass Lebensweise, Lebensumstände und persönliche Bedürfnisse zusammengehören – fließt in meine Gesundheitsberatung in Kempten mit ein."
-    }
-   }
-  ]
- },
- {
   "@type": "Service",
+  "@id": "{SITE}/beratung/#service",
   "name": "Gesundheitsberatung mit psychologischen Aspekten",
   "serviceType": "Gesundheitsberatung",
   "provider": {
@@ -68,14 +15,14 @@
   "offers": [
    {
     "@type": "Offer",
-    "name": "Kennenlerngespräch (20 Minuten)",
+    "name": "Erstgespräch (20 Minuten)",
     "price": "0",
     "priceCurrency": "EUR"
    },
    {
     "@type": "Offer",
-    "name": "Beratungsgespräch (60 Minuten)",
-    "price": "80",
+    "name": "Beratungsgespräch (50 Minuten)",
+    "price": "60",
     "priceCurrency": "EUR"
    }
   ]

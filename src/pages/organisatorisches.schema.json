@@ -1,0 +1,72 @@
+[
+ {
+  "@type": "FAQPage",
+  "@id": "{SITE}/organisatorisches/#faq",
+  "mainEntity": [
+   {
+    "@type": "Question",
+    "name": "Was kostet die Gesundheitsberatung?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Das Erstgespräch dauert 20 Minuten und ist kostenfrei. Ein Beratungsgespräch dauert 50 Minuten und kostet 60 €. Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Übernimmt die Krankenkasse die Kosten?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Nein. Die Beratung ist eine Selbstzahlerleistung."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Wie bezahle ich?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Die Zahlung erfolgt im Voraus per PayPal oder Überweisung. Andere Zahlungsarten sind nach Absprache möglich."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Wie viele Termine brauche ich?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Das richtet sich nach Ihrem Anliegen. Nach dem ersten Gespräch entscheiden Sie, ob Sie weitere Begleitung wünschen. Folgetermine vereinbaren wir nach Bedarf, zum Beispiel wöchentlich oder vierzehntägig."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Muss ich mich auf das erste Gespräch vorbereiten?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Nein. Sie müssen sich nicht besonders vorbereiten oder bereits ein klares Ziel haben. Gemeinsam finden wir heraus, ob mein Angebot zu Ihren Wünschen passt."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Wo findet die Beratung statt?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Vor Ort in Kempten (Allgäu) oder online – damit auch deutschlandweit. Je nach Anliegen sind auch gemeinsame Spaziergänge möglich."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Ist die Beratung eine Therapie?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Nein. Meine Gesundheitsberatung dient Ihrer Orientierung und unterstützt Sie bei gesundheitsbewussten Lebensgewohnheiten und im Umgang mit Alltagsbelastungen. Sie umfasst keine ärztliche Diagnostik, Behandlung oder Psychotherapie."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Welche Rolle spielt Ayurveda?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Ich bin zertifizierte Ayurveda-Gesundheitsberaterin. Das Wissen des Ayurveda ergänzt meinen Blick auf Ernährung, Gewohnheiten und persönliche Bedürfnisse – mit verständlichen Anregungen für Ihren Alltag."
+    }
+   }
+  ]
+ }
+]

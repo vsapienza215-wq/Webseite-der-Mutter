@@ -23,7 +23,13 @@ SITE = "https://concetta-sapienza.com"   # Domain bei Bedarf hier ändern
 BRAND = "SAPiENZA"
 EMAIL = "kontakt@concetta-sapienza.com"
 
-NAV = [("/", "Startseite"), ("/beratung/", "Beratung"), ("/ueber-mich/", "Über mich")]
+NAV = [
+    ("/", "Startseite"),
+    ("/beratung/", "Beratung"),
+    ("/themen/", "Themen"),
+    ("/ueber-mich/", "Über mich"),
+    ("/organisatorisches/", "Organisatorisches"),
+]
 FOOTER_NAV = [
     ("/impressum/", "Impressum"),
     ("/datenschutz/", "Datenschutz"),
@@ -61,7 +67,7 @@ ORG_SCHEMA = {
         {"@type": "AdministrativeArea", "name": "Allgäu"},
         {"@type": "Country", "name": "Deutschland"},
     ],
-    "priceRange": "0–80 €",
+    "priceRange": "0–60 €",
     "founder": {"@id": SITE + "/ueber-mich/#person"},
     "knowsLanguage": "de",
 }
@@ -113,8 +119,11 @@ def header(current):
     return f"""<a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="brand" href="/" aria-label="{BRAND} – zur Startseite">{logo_inline()}</a>
-    <nav class="nav" aria-label="Hauptnavigation">
+    <a class="brand" href="/" aria-label="{BRAND} Gesundheitsberatung – zur Startseite">{logo_inline()}<span class="brand__tag">Gesundheitsberatung</span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="hauptnavigation">
+      <span class="nav-toggle__label">Menü</span><span class="nav-toggle__icon" aria-hidden="true"><i></i><i></i></span>
+    </button>
+    <nav class="nav" id="hauptnavigation" aria-label="Hauptnavigation">
       <ul>{''.join(items)}</ul>
     </nav>
   </div>
@@ -130,7 +139,7 @@ def footer():
     <div class="footer-grid">
       <div class="footer-brand">
         <img src="/assets/img/logo.svg" alt="{BRAND}" width="413" height="61" loading="lazy">
-        <p>Gesundheitsberatung mit psychologischen Aspekten. In Kempten (Allgäu), beim Spaziergang, online und am Telefon.</p>
+        <p>Gesundheitsberatung mit psychologischen Aspekten. Individuell, alltagsnah, mit Blick auf das Ganze. In Kempten (Allgäu) und online.</p>
       </div>
       <nav class="footer-nav" aria-label="Seiten">
         <p class="footer-title">Seiten</p>
