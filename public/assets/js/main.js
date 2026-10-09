@@ -175,7 +175,7 @@
     });
 
     // Karten: Goldschimmer folgt der Maus
-    Array.prototype.forEach.call(document.querySelectorAll('.format, .topic, .info, .box:not(.box--quiet)'), function (card) {
+    Array.prototype.forEach.call(document.querySelectorAll('.format, .info, .box:not(.box--quiet)'), function (card) {
       card.classList.add('has-sheen');
       card.addEventListener('pointermove', function (e) {
         var r = card.getBoundingClientRect();
