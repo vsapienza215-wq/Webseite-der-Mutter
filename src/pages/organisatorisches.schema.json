@@ -48,7 +48,15 @@
     "name": "Wo findet die Beratung statt?",
     "acceptedAnswer": {
      "@type": "Answer",
-     "text": "Vor Ort in Kempten (Allgäu) oder online – damit auch deutschlandweit. Je nach Anliegen sind auch gemeinsame Spaziergänge möglich."
+     "text": "Vor Ort in Kempten (Allgäu), online per Video oder am Telefon – online und telefonisch damit auch deutschlandweit. Je nach Anliegen sind auch gemeinsame Spaziergänge möglich."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Kann ich mich auch mit einer chronischen Erkrankung beraten lassen?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Ja. Bei chronischen Erkrankungen wie Arthrose oder Typ-2-Diabetes begleite ich Sie unterstützend in Ihrem Alltag – ergänzend zur ärztlichen Behandlung und nach Rücksprache mit Ihrer Ärztin oder Ihrem Arzt."
     }
    },
    {

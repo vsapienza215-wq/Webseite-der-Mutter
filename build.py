@@ -139,7 +139,7 @@ def footer():
     <div class="footer-grid">
       <div class="footer-brand">
         <img src="/assets/img/logo.svg" alt="{BRAND}" width="413" height="61" loading="lazy">
-        <p>Gesundheitsberatung mit psychologischen Aspekten. Individuell, alltagsnah, mit Blick auf das Ganze. In Kempten (Allgäu) und online.</p>
+        <p>Gesundheitsberatung mit psychologischen Aspekten. Individuell, alltagsnah, mit Blick auf das Ganze. In Kempten (Allgäu), online und am Telefon.</p>
       </div>
       <nav class="footer-nav" aria-label="Seiten">
         <p class="footer-title">Seiten</p>

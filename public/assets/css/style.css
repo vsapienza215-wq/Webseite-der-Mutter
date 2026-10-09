@@ -354,7 +354,7 @@ strong { color: var(--ink); font-weight: 500; }
 /* Formate */
 .formats { display: grid; gap: clamp(1rem, 2vw, 1.5rem); margin-top: clamp(2.5rem, 5vw, 3.5rem); }
 @media (min-width: 48rem) { .formats { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 64rem) { .formats { grid-template-columns: 1.4fr 1fr 1fr; grid-template-rows: auto auto; } .format--feature { grid-row: auto; } }
+@media (min-width: 64rem) { .formats { grid-template-columns: 1.3fr 1fr 1fr 1fr; } .format--feature { grid-row: auto; } }
 .format { background: var(--bg); padding: clamp(1.75rem, 3vw, 2.5rem); border: 1px solid transparent; transition: border-color .4s var(--ease-out), transform .5s var(--ease-out); }
 .format:hover { border-color: var(--line-soft); }
 .format svg { width: 2.25rem; height: 2.25rem; stroke: var(--line); fill: none; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 1.5rem; }
@@ -653,7 +653,8 @@ strong { color: var(--ink); font-weight: 500; }
 .topic { background: var(--bg); padding: clamp(1.75rem, 3vw, 2.5rem); border: 1px solid transparent; transition: border-color .4s var(--ease-out); }
 .topic__num { display: block; font-family: var(--serif); font-size: 1rem; letter-spacing: .1em; color: var(--accent-text); margin-bottom: 1.25rem; }
 .topic h2 { font-size: clamp(1.5rem, 1.3rem + .6vw, 1.875rem); line-height: 1.2; margin-bottom: .75rem; }
-.box--quiet { background: transparent; border: 0; border-left: 1px solid var(--line); padding-block: .25rem; }
+.box--quiet { background: transparent; border: 0; border-left: 1px solid var(--line); padding-block: 1.5rem; }
+.section--alt .box--quiet { background: rgba(255, 255, 255, .45); }
 .box--quiet .lead { margin-bottom: .25rem; }
 
 .numbered { display: grid; gap: clamp(2.5rem, 5vw, 4rem); list-style: none; margin: 0; padding: 0; }
@@ -681,3 +682,6 @@ strong { color: var(--ink); font-weight: 500; }
 .price-list dd { text-align: right; }
 .price-list dd span { display: block; font-size: var(--fs-small); }
 .price-list dd strong { font-family: var(--serif); font-size: 1.625rem; font-weight: 500; }
+
+.quiet-pair { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); }
+@media (min-width: 56rem) { .quiet-pair { grid-template-columns: 1fr 1fr; } }
