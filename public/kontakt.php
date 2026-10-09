@@ -184,6 +184,8 @@ if (count($hits) >= RATE_LIMIT) {
 $vorname  = clean_line((string) ($_POST['vorname'] ?? ''), 60);
 $telefon  = clean_line((string) ($_POST['telefon'] ?? ''), 30);
 $email    = clean_line((string) ($_POST['email'] ?? ''), 120);
+$gespraechWahl = ['Kennenlernen (20 Min., kostenfrei)', 'Beratungsgespräch (50 Min., 60 €)'];
+$gespraech = in_array($_POST['gespraech'] ?? '', $gespraechWahl, true) ? $_POST['gespraech'] : $gespraechWahl[0];
 $anliegen = mb_substr(trim((string) ($_POST['anliegen'] ?? '')), 0, 2000, 'UTF-8');
 $einwilligung = ($_POST['einwilligung'] ?? '') === 'ja';
 
@@ -197,13 +199,14 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     respond(false, 'Bitte prüfen Sie die E-Mail-Adresse.', 422);
 }
 
-$subject = 'Neue Anfrage über die Website – ' . $vorname;
+$subject = 'Neue Anfrage: ' . strtok($gespraech, ' ') . ' – ' . $vorname;
 $body = "Neue Anfrage über das Kontaktformular\r\n"
       . "=====================================\r\n\r\n"
+      . "Wunsch:   {$gespraech}\r\n"
       . "Vorname:  {$vorname}\r\n"
       . "Telefon:  {$telefon}\r\n"
       . "E-Mail:   {$email}\r\n\r\n"
-      . "Worum geht es?\r\n"
+      . "Nachricht:\r\n"
       . ($anliegen !== '' ? str_replace(["\r\n", "\r", "\n"], "\r\n", $anliegen) : '(keine Angabe)') . "\r\n\r\n"
       . "-------------------------------------\r\n"
       . "Einwilligung Datenschutz (inkl. Gesundheitsdaten): erteilt\r\n"

@@ -29,6 +29,7 @@ NAV = [
     ("/themen/", "Themen"),
     ("/ueber-mich/", "Über mich"),
     ("/organisatorisches/", "Organisatorisches"),
+    ("/kontakt/", "Kontakt"),
 ]
 FOOTER_NAV = [
     ("/impressum/", "Impressum"),
@@ -171,42 +172,50 @@ def privacy_notice():
 </aside>"""
 
 
-def contact_dialog():
-    return f"""<dialog class="modal" id="kontakt" aria-labelledby="kontakt-titel">
-  <div class="modal__inner">
-    <button class="modal__close" type="button" data-close aria-label="Fenster schließen">{ICON['close']}</button>
+def contact_form(px, heading_tag="h2", inline=False):
+    """Kontaktformular – einmal definiert, genutzt im Pop-up (px="m") und offen auf /kontakt/ (px="k")."""
+    h = heading_tag
+    close_btn = "" if inline else '<p><button class="btn" type="button" data-close>Schließen</button></p>'
+    return f"""<div class="contact" data-contact>
     <div data-view="form">
-      <h2 id="kontakt-titel">Kennenlernen anfragen</h2>
-      <p class="intro">Schreiben Sie mir kurz, worum es geht. Ich rufe Sie zurück – das Kennenlerngespräch (20&nbsp;Min.) ist kostenlos.</p>
+      <{h} id="{px}-titel" class="contact__title">Zeit für mich</{h}>
+      <p class="intro">Erzählen Sie mir kurz, was Sie zu mir bringt. Ich melde mich bei Ihnen&nbsp;– das Kennenlernen ist kostenfrei.</p>
       <form class="form" action="/kontakt.php" method="post" novalidate>
-        <div class="field">
-          <label for="f-vorname">Vorname</label>
-          <input id="f-vorname" name="vorname" type="text" autocomplete="given-name" maxlength="60" required aria-describedby="e-vorname">
-          <span class="error" id="e-vorname" data-error-for="vorname" aria-live="polite"></span>
+        <fieldset class="choice">
+          <legend>Was wünschen Sie sich?</legend>
+          <label class="choice__item"><input type="radio" name="gespraech" value="Kennenlernen (20 Min., kostenfrei)" checked><span><strong>Kennenlernen</strong><small>20 Minuten · kostenfrei</small></span></label>
+          <label class="choice__item"><input type="radio" name="gespraech" value="Beratungsgespräch (50 Min., 60 €)"><span><strong>Beratungsgespräch</strong><small>50 Minuten · 60&nbsp;€</small></span></label>
+        </fieldset>
+        <div class="field-row">
+          <div class="field">
+            <label for="{px}-vorname">Vorname</label>
+            <input id="{px}-vorname" name="vorname" type="text" autocomplete="given-name" maxlength="60" required aria-describedby="{px}-e-vorname">
+            <span class="error" id="{px}-e-vorname" data-error-for="vorname" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="{px}-telefon">Telefonnummer</label>
+            <input id="{px}-telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" required aria-describedby="{px}-e-telefon">
+            <span class="error" id="{px}-e-telefon" data-error-for="telefon" aria-live="polite"></span>
+          </div>
         </div>
         <div class="field">
-          <label for="f-telefon">Telefonnummer</label>
-          <input id="f-telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" required aria-describedby="e-telefon">
-          <span class="error" id="e-telefon" data-error-for="telefon" aria-live="polite"></span>
+          <label for="{px}-email">E-Mail</label>
+          <input id="{px}-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" required aria-describedby="{px}-e-email">
+          <span class="error" id="{px}-e-email" data-error-for="email" aria-live="polite"></span>
         </div>
         <div class="field">
-          <label for="f-email">E-Mail</label>
-          <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" required aria-describedby="e-email">
-          <span class="error" id="e-email" data-error-for="email" aria-live="polite"></span>
-        </div>
-        <div class="field">
-          <label for="f-anliegen">Kurz: Worum geht es? <span class="opt">(optional)</span></label>
-          <textarea id="f-anliegen" name="anliegen" rows="4" maxlength="2000"></textarea>
+          <label for="{px}-anliegen">Ihre Nachricht <span class="opt">(optional)</span></label>
+          <textarea id="{px}-anliegen" name="anliegen" rows="4" maxlength="2000" placeholder="Schreiben Sie mir kurz, was Sie zu mir bringt."></textarea>
         </div>
         <div class="hp" aria-hidden="true">
-          <label for="f-website">Website (bitte leer lassen)</label>
-          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+          <label for="{px}-website">Website (bitte leer lassen)</label>
+          <input id="{px}-website" name="website" type="text" tabindex="-1" autocomplete="off">
         </div>
         <input type="hidden" name="ts" value="">
         <div class="check">
-          <input id="f-einwilligung" name="einwilligung" type="checkbox" value="ja" required aria-describedby="e-einwilligung">
-          <label for="f-einwilligung">Ich willige ein, dass meine Angaben – auch Angaben zu meiner Gesundheit – zur Bearbeitung meiner Anfrage verarbeitet werden (Art.&nbsp;9 Abs.&nbsp;2 lit.&nbsp;a DSGVO). Die Einwilligung kann ich jederzeit widerrufen. Mehr in der <a class="text-link" href="/datenschutz/">Datenschutzerklärung</a>.</label>
-          <span class="error" id="e-einwilligung" data-error-for="einwilligung" aria-live="polite"></span>
+          <input id="{px}-einwilligung" name="einwilligung" type="checkbox" value="ja" required aria-describedby="{px}-e-einwilligung">
+          <label for="{px}-einwilligung">Ich willige ein, dass meine Angaben – auch Angaben zu meiner Gesundheit – zur Bearbeitung meiner Anfrage verarbeitet werden (Art.&nbsp;9 Abs.&nbsp;2 lit.&nbsp;a DSGVO). Die Einwilligung kann ich jederzeit widerrufen. Mehr in der <a class="text-link" href="/datenschutz/">Datenschutzerklärung</a>.</label>
+          <span class="error" id="{px}-e-einwilligung" data-error-for="einwilligung" aria-live="polite"></span>
         </div>
         <div class="form-hints">
           <p>Ich melde mich telefonisch oder per E-Mail bei Ihnen. Die Beratung ersetzt keine ärztliche oder psychotherapeutische Behandlung.</p>
@@ -218,10 +227,18 @@ def contact_dialog():
     </div>
     <div data-view="success" class="success" hidden>
       {ICON['check']}
-      <h2>Vielen Dank.</h2>
+      <{h}>Vielen Dank.</{h}>
       <p>Ihre Anfrage ist angekommen. Ich melde mich bei Ihnen.</p>
-      <p><button class="btn" type="button" data-close>Schließen</button></p>
+      {close_btn}
     </div>
+  </div>"""
+
+
+def contact_dialog():
+    return f"""<dialog class="modal" id="kontakt" aria-labelledby="m-titel">
+  <div class="modal__inner">
+    <button class="modal__close" type="button" data-close aria-label="Fenster schließen">{ICON['close']}</button>
+    {contact_form("m")}
   </div>
 </dialog>"""
 
@@ -291,7 +308,7 @@ def render(meta, body):
 <body>
 {header(meta.get('nav', path))}
 <main id="inhalt">
-{body.strip()}
+{body.strip().replace("{{CONTACT_FORM}}", contact_form("k", inline=True))}
 </main>
 {footer()}
 {contact_dialog()}

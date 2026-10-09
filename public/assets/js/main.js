@@ -163,17 +163,6 @@
     }, { passive: true });
     document.documentElement.addEventListener('mouseleave', function () { glow.classList.remove('is-on'); });
 
-    // Haupt-Buttons ziehen sich minimal zur Maus
-    Array.prototype.forEach.call(document.querySelectorAll('.btn--circle'), function (btn) {
-      btn.addEventListener('pointermove', function (e) {
-        var r = btn.getBoundingClientRect();
-        var dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
-        var dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
-        btn.style.transform = 'translate(' + (dx * 4).toFixed(2) + 'px,' + (dy * 3).toFixed(2) + 'px)';
-      });
-      btn.addEventListener('pointerleave', function () { btn.style.transform = ''; });
-    });
-
     // Karten: Goldschimmer folgt der Maus
     Array.prototype.forEach.call(document.querySelectorAll('.format, .info, .box:not(.box--quiet)'), function (card) {
       card.classList.add('has-sheen');
@@ -238,6 +227,14 @@
     window.matchMedia('(min-width: 64.01rem)').addEventListener('change', function (m) { if (m.matches) setNav(false); });
   }
 
+  /* Themen: Beschreibung erscheint beim Darüberfahren und bleibt dann stehen */
+  Array.prototype.forEach.call(document.querySelectorAll('.wish'), function (w) {
+    var open = function () { w.classList.add('is-open'); };
+    w.addEventListener('mouseenter', open);
+    w.addEventListener('focusin', open);
+    w.addEventListener('click', open);
+  });
+
   /* Datenschutz-Hinweis: erscheint, bis er einmal geschlossen wurde */
   var note = document.querySelector('.privacy-note');
   if (note) {
@@ -254,21 +251,123 @@
     }
   }
 
-  /* Kontakt-Dialog */
+  /* Kontaktformulare (Pop-up und offen auf /kontakt/) */
+  var messages = {
+    vorname: 'Bitte geben Sie Ihren Vornamen an.',
+    telefon: 'Bitte geben Sie eine Telefonnummer an, unter der ich Sie erreiche.',
+    telefonFormat: 'Bitte prüfen Sie die Telefonnummer (nur Ziffern, Leerzeichen, +, -, /).',
+    email: 'Bitte geben Sie Ihre E-Mail-Adresse an.',
+    emailFormat: 'Bitte prüfen Sie die E-Mail-Adresse.',
+    einwilligung: 'Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.'
+  };
+
+  function initContact(box) {
+    var form = box.querySelector('form');
+    var formView = box.querySelector('[data-view="form"]');
+    var successView = box.querySelector('[data-view="success"]');
+    var status = box.querySelector('.form-status');
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var tsField = form.querySelector('input[name="ts"]');
+    if (tsField) tsField.value = String(Date.now());
+
+    function setError(field, msg) {
+      var input = form.elements[field];
+      var err = form.querySelector('[data-error-for="' + field + '"]');
+      if (!input || !err) return;
+      err.textContent = msg || '';
+      if (msg) input.setAttribute('aria-invalid', 'true');
+      else input.removeAttribute('aria-invalid');
+    }
+
+    function validate() {
+      var ok = true;
+      var vorname = form.elements.vorname.value.trim();
+      var telefon = form.elements.telefon.value.trim();
+      setError('vorname', vorname ? '' : messages.vorname);
+      if (!vorname) ok = false;
+      if (!telefon) { setError('telefon', messages.telefon); ok = false; }
+      else if (!/^[0-9+()\/\-\s]{6,30}$/.test(telefon)) { setError('telefon', messages.telefonFormat); ok = false; }
+      else setError('telefon', '');
+      var email = form.elements.email.value.trim();
+      if (!email) { setError('email', messages.email); ok = false; }
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setError('email', messages.emailFormat); ok = false; }
+      else setError('email', '');
+      var consent = form.elements.einwilligung.checked;
+      setError('einwilligung', consent ? '' : messages.einwilligung);
+      if (!consent) ok = false;
+      return ok;
+    }
+
+    ['vorname', 'telefon', 'email', 'einwilligung'].forEach(function (name) {
+      var el = form.elements[name];
+      el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', function () {
+        if (el.getAttribute('aria-invalid') === 'true') validate();
+      });
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      status.textContent = '';
+      status.classList.remove('is-error');
+      if (!validate()) {
+        var firstInvalid = form.querySelector('[aria-invalid="true"]');
+        if (firstInvalid) firstInvalid.focus();
+        return;
+      }
+      submitBtn.disabled = true;
+      var label = submitBtn.querySelector('.label');
+      var original = label.textContent;
+      label.textContent = 'Wird gesendet …';
+
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+        .then(function (res) { return res.json().catch(function () { return { ok: false }; }); })
+        .then(function (data) {
+          if (data && data.ok) {
+            formView.hidden = true;
+            successView.hidden = false;
+            var focusTarget = successView.querySelector('.btn') || successView.querySelector('h2, h3');
+            if (focusTarget) { if (!focusTarget.matches('.btn')) focusTarget.setAttribute('tabindex', '-1'); focusTarget.focus(); }
+          } else {
+            throw new Error((data && data.message) || 'send');
+          }
+        })
+        .catch(function (err) {
+          status.classList.add('is-error');
+          status.textContent = err && err.message && err.message !== 'send' && err.message !== 'Failed to fetch'
+            ? err.message
+            : 'Das hat leider nicht geklappt. Bitte versuchen Sie es später erneut oder schreiben Sie eine E-Mail an kontakt@concetta-sapienza.com.';
+        })
+        .then(function () {
+          submitBtn.disabled = false;
+          label.textContent = original;
+        });
+    });
+
+    return {
+      reset: function () {
+        if (successView && !successView.hidden) {
+          form.reset();
+          successView.hidden = true;
+          formView.hidden = false;
+        }
+        if (tsField) tsField.value = String(Date.now());
+      }
+    };
+  }
+
+  var contacts = Array.prototype.map.call(document.querySelectorAll('[data-contact]'), function (box) {
+    return { box: box, api: initContact(box) };
+  });
+
+  /* Pop-up */
   var dialog = document.getElementById('kontakt');
   if (!dialog || typeof dialog.showModal !== 'function') return;
-
-  var form = dialog.querySelector('form');
-  var formView = dialog.querySelector('[data-view="form"]');
-  var successView = dialog.querySelector('[data-view="success"]');
-  var status = dialog.querySelector('.form-status');
-  var submitBtn = form.querySelector('button[type="submit"]');
-  var tsField = form.querySelector('input[name="ts"]');
+  var dialogContact = contacts.filter(function (c) { return dialog.contains(c.box); })[0];
   var opener = null;
 
   function openDialog(trigger) {
     opener = trigger || document.activeElement;
-    if (tsField) tsField.value = String(Date.now());
+    if (dialogContact) dialogContact.api.reset();
     dialog.classList.remove('is-closing');
     dialog.showModal();
     doc.style.overflow = 'hidden';
@@ -278,10 +377,7 @@
 
   function closeDialog() {
     if (!dialog.open) return;
-    var finish = function () {
-      dialog.classList.remove('is-closing');
-      dialog.close();
-    };
+    var finish = function () { dialog.classList.remove('is-closing'); dialog.close(); };
     if (reduceMotion) { finish(); return; }
     dialog.classList.add('is-closing');
     setTimeout(finish, 260);
@@ -289,14 +385,8 @@
 
   dialog.addEventListener('close', function () {
     doc.style.overflow = '';
-    if (successView && !successView.hidden) {
-      form.reset();
-      successView.hidden = true;
-      formView.hidden = false;
-    }
     if (opener && typeof opener.focus === 'function') opener.focus();
   });
-
   dialog.addEventListener('cancel', function (e) { e.preventDefault(); closeDialog(); });
   dialog.addEventListener('click', function (e) { if (e.target === dialog) closeDialog(); });
   Array.prototype.forEach.call(dialog.querySelectorAll('[data-close]'), function (btn) {
@@ -310,91 +400,4 @@
     });
   });
   if (location.hash === '#kontakt') openDialog();
-
-  /* Formular: Validierung + Versand */
-  var messages = {
-    vorname: 'Bitte geben Sie Ihren Vornamen an.',
-    telefon: 'Bitte geben Sie eine Telefonnummer an, unter der ich Sie erreiche.',
-    telefonFormat: 'Bitte prüfen Sie die Telefonnummer (nur Ziffern, Leerzeichen, +, -, /).',
-    email: 'Bitte geben Sie Ihre E-Mail-Adresse an.',
-    emailFormat: 'Bitte prüfen Sie die E-Mail-Adresse.',
-    einwilligung: 'Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.'
-  };
-
-  function setError(field, msg) {
-    var input = form.elements[field];
-    var err = form.querySelector('[data-error-for="' + field + '"]');
-    if (!input || !err) return;
-    err.textContent = msg || '';
-    if (msg) input.setAttribute('aria-invalid', 'true');
-    else input.removeAttribute('aria-invalid');
-  }
-
-  function validate() {
-    var ok = true;
-    var vorname = form.elements.vorname.value.trim();
-    var telefon = form.elements.telefon.value.trim();
-    setError('vorname', vorname ? '' : messages.vorname);
-    if (!vorname) ok = false;
-    if (!telefon) { setError('telefon', messages.telefon); ok = false; }
-    else if (!/^[0-9+()\/\-\s]{6,30}$/.test(telefon)) { setError('telefon', messages.telefonFormat); ok = false; }
-    else setError('telefon', '');
-    var email = form.elements.email.value.trim();
-    if (!email) { setError('email', messages.email); ok = false; }
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setError('email', messages.emailFormat); ok = false; }
-    else setError('email', '');
-    var consent = form.elements.einwilligung.checked;
-    setError('einwilligung', consent ? '' : messages.einwilligung);
-    if (!consent) ok = false;
-    return ok;
-  }
-
-  ['vorname', 'telefon', 'email', 'einwilligung'].forEach(function (name) {
-    var el = form.elements[name];
-    el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', function () {
-      if (el.getAttribute('aria-invalid') === 'true') validate();
-    });
-  });
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    status.textContent = '';
-    status.classList.remove('is-error');
-    if (!validate()) {
-      var firstInvalid = form.querySelector('[aria-invalid="true"]');
-      if (firstInvalid) firstInvalid.focus();
-      return;
-    }
-    submitBtn.disabled = true;
-    var label = submitBtn.querySelector('.label');
-    var original = label.textContent;
-    label.textContent = 'Wird gesendet …';
-
-    fetch(form.action, {
-      method: 'POST',
-      body: new FormData(form),
-      headers: { 'Accept': 'application/json' }
-    })
-      .then(function (res) { return res.json().catch(function () { return { ok: false }; }); })
-      .then(function (data) {
-        if (data && data.ok) {
-          formView.hidden = true;
-          successView.hidden = false;
-          var closeBtn = successView.querySelector('.btn');
-          if (closeBtn) closeBtn.focus();
-        } else {
-          throw new Error((data && data.message) || 'send');
-        }
-      })
-      .catch(function (err) {
-        status.classList.add('is-error');
-        status.textContent = err && err.message && err.message !== 'send' && err.message !== 'Failed to fetch'
-          ? err.message
-          : 'Das hat leider nicht geklappt. Bitte versuchen Sie es später erneut oder schreiben Sie eine E-Mail an kontakt@concetta-sapienza.com.';
-      })
-      .then(function () {
-        submitBtn.disabled = false;
-        label.textContent = original;
-      });
-  });
 })();
