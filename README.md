@@ -25,3 +25,9 @@ Den **Inhalt von `public/`** in das Hauptverzeichnis des Webspaces laden (inkl. 
 - Domain in `build.py` (`SITE`) und `public/kontakt.php` (`MAIL_FROM`) prüfen
 - HTTPS-Weiterleitung in `public/.htaccess` aktivieren
 - Testanfrage über das Formular senden (Absenderadresse muss zur Domain gehören, SPF beachten)
+
+## Passwortschutz (vor dem Livegang)
+- Alle Aufrufe laufen über `gate.php`; ohne Anmeldung erscheint nur eine weiße Login-Seite.
+- Zugangsdaten stehen in `gate-config.php` (nur auf dem Server, nicht im Repository; Vorlage: `gate-config.beispiel.php`).
+- Anmeldung gilt 30 Tage pro Browser. Abmelden: `/gate.php?abmelden`.
+- **Zum Livegang:** in `.htaccess` den Block „Passwortschutz“ löschen (die Dateien `gate.php` / `gate-config.php` können danach weg).

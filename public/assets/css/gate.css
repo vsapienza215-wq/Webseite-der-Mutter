@@ -1,0 +1,25 @@
+/* SAPiENZA – Login-Seite (Passwortschutz vor dem Livegang) */
+@font-face { font-family: "DM Sans"; font-weight: 400; font-display: swap; src: url("/assets/fonts/dm-sans-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "DM Sans"; font-weight: 500; font-display: swap; src: url("/assets/fonts/dm-sans-latin-500-normal.woff2") format("woff2"); }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #fff; }
+body { display: grid; place-items: center; min-height: 100vh; min-height: 100svh; padding: 1.5rem; font-family: "DM Sans", system-ui, sans-serif; color: #665d57; -webkit-font-smoothing: antialiased; }
+.gate { width: min(100%, 21rem); text-align: center; animation: gate-in .9s cubic-bezier(.22,.61,.36,1) both; }
+.gate__logo { width: 10.5rem; height: auto; margin: 0 auto; display: block; }
+.gate__note { margin: 1.25rem 0 2.5rem; font-size: .6875rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: #7d5f3b; }
+.gate__form { display: grid; gap: .45rem; text-align: left; }
+.gate__form label { font-size: .8125rem; font-weight: 500; color: #33251f; margin-top: .65rem; }
+.gate__form input {
+  width: 100%; padding: .8rem 1rem; min-height: 3rem; font: inherit; font-size: 1rem; color: #33251f;
+  border: 1px solid #c9b7a0; border-radius: 3px; background: #fff; transition: border-color .25s, box-shadow .25s;
+}
+.gate__form input:focus { outline: none; border-color: #33251f; box-shadow: 0 0 0 3px rgba(169, 137, 97, .25); }
+.gate__form button {
+  margin-top: 1.5rem; min-height: 3rem; border: 0; border-radius: 999px; background: #85705f; color: #fff;
+  font: inherit; font-size: .8125rem; letter-spacing: .08em; cursor: pointer; transition: background-color .3s;
+}
+.gate__form button:hover { background: #7a6656; }
+.gate__form button:focus-visible { outline: 2px solid #33251f; outline-offset: 3px; }
+.gate__error { margin: .75rem 0 0; font-size: .875rem; color: #9b2c1f; }
+@keyframes gate-in { from { opacity: 0; transform: translateY(10px); } }
+@media (prefers-reduced-motion: reduce) { .gate { animation: none; } }

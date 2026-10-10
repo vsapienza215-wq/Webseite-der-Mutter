@@ -4,16 +4,27 @@ Options -Indexes
 ErrorDocument 404 /404.html
 
 # Zugangsdaten und Fehlerprotokoll niemals ausliefern
-<FilesMatch "^(kontakt-config\.php|kontakt-fehler\.log)$">
+<FilesMatch "^(kontakt-config\.php|kontakt-fehler\.log|gate-config(\.beispiel)?\.php)$">
   Require all denied
 </FilesMatch>
 DirectoryIndex index.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
   # HTTPS erzwingen (aktivieren, sobald das SSL-Zertifikat eingerichtet ist)
   # RewriteCond %{HTTPS} off
   # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # ===== Passwortschutz (vor dem Livegang) – zum Livegang diesen Block löschen =====
+  # Alle Aufrufe laufen durch gate.php; ohne Anmeldung erscheint nur die Login-Seite.
+  RewriteCond %{REQUEST_URI} !^/gate\.php$
+  RewriteCond %{REQUEST_URI} !^/assets/css/gate\.css$
+  RewriteCond %{REQUEST_URI} !^/assets/img/logo\.svg$
+  RewriteCond %{REQUEST_URI} !^/assets/fonts/
+  RewriteCond %{REQUEST_URI} !^/(favicon\.svg|apple-touch-icon\.png)$
+  RewriteRule ^ /gate.php [L]
+  # ===== Ende Passwortschutz =====
 </IfModule>
 
 <IfModule mod_headers.c>
